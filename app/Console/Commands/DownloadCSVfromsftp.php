@@ -17,25 +17,25 @@ class DownloadCSVfromsftp extends Command
 
     public function handle() {
         /*$details = array(
-            'host'     => '67.23.226.139',
+            'host'     => '',
             'port'     => 22,
-            'username' => 'midclass',
-            'password' => 'RX(dmjKvSB(UJedVXKBJ', // uou can set password or key path 
+            'username' => '',
+            'password' => '',
             'root' => '/public_html/supplier-file/',
             'timeout' => 10,
             'directoryPerm' => 0755,
             'type'=>'ftp'
         );*/
 
-        $newkey = 'ppk/anupam_aws.ppk';
+        $newkey = 'ppk/sacnbdsh.ppk';
         $newkeyPath = storage_path($newkey);
         $details = array(
-            'host'     => '52.77.182.246',
+            'host'     => '',
             'port'     => 22,
-            'username' => 'ec2-user',
+            'username' => '',
             'password' => '',
             'privateKey' => "$newkeyPath",
-            'root' => '/var/www/html/membraindev/supplier-file/',
+            'root' => '/var/www/html/project/supplier-file/',
             'timeout' => 10,
             'directoryPerm' => 0755,
             'type'=>'sftp'
