@@ -1,0 +1,19 @@
+id	domain	comment	lead status
+1	http://localhost/membrain/public/	hcsh hcbhsbdv	accepted
+2	http://localhost/membrain-one/public/	hcsh hcbhsbdv	dupliate
+3	http://www.google.com	agfbalgals	invalid
+4	http://www.facebook.com	KUDIIdi	
+5	http://www.twitter.com	uhfeuihewiu	
+6	http://www.membrain.com	qwert	
+7	http://www.google.co.in	poiuytrewq	
+8	http://www.localhost.com	asdf	
+9	http://www.bookmyshow.com	zxc	
+10	http://www.wordweb.com	qwop	
+11	http://www.makemytrip.com	lk	
+12	http://www.wordsweb.com	qwq	
+13	http://books.com	aaa	
+14	http://trees.com	qwert	
+15	http://flowers.com	mnb	
+16	http://localhost/membrain/public1/	hcsh hcbhsbdv1	
+17	http://localhost/membrain-one/public1/	hcsh hcbhsbdv1	
+18	http://www.googleert.com	agfbalgalsas	

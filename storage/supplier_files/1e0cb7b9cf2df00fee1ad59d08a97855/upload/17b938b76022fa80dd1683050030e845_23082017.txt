@@ -1,0 +1,111 @@
+Sal	First	Last	company	position	Address1	Address2	Suburb	State	Postcode	country	address1m	address2m	suburbm	statem	postcodem	countrym	Phone1	phone2	fax	mobile	web	Email	email2	dpid	u1	u2 datetime	u3	u4	u5	u6	u7	u8	u9	u10	u11	u12	u13	u14	u15	u16	u17	u18	u19	u20
+	Alex	Khera			2 Fort St		Ngaio	Wellington	6035	NZ										21831955		alexshilpikhera@gmail.com																						Cohort Standalone
+	Ankur	Patel			2/25 Duncan Ave		Mount Albert	Auckland	1025	NZ										226270573		ankur.icai37@gmail.com																						Cohort Standalone
+Mr	Robert	Liai			56 Mcannalley St		Manurewa East	Auckland	2102	NZ										2041069938		ezra1275@gmail.com																						Cohort Standalone
+	Ravinesh	Chetty			8/10 Central Ave		Onerahi	Whangarei	110	NZ										210441187		raves.rkc@gmail.com																						Cohort Standalone
+	Darwin	Lomboy			25 Haughey Ave		Hillsborough	Auckland	1042	NZ										272283904		lomboydarwin@yahoo.co.nz																						Cohort Standalone
+	Iefata	Lamese			68 Langiola Dr		Mangere East	Auckland	2024	NZ										2108805791		aitutaki17@windowslive.com																						Cohort Standalone
+	Sam	Aghdassi			18 Pukatea Ave		Rosedale	Auckland	632	NZ										212926896		t_siya@hotmail.com																						Cohort Standalone
+	Polly	Edwards			2/77 Cameron St		Onerahi	Whangarei	110	NZ										2108233228		karenapolly83@gmail.com																						Cohort Standalone
+	Foisaga	Su'e			21B Albrecht Ave		Mount Eden	Auckland	1041	NZ										2102404489		f.sue01@gmail.com																						Cohort Standalone
+	Derek	Bishop			447j/1 Isolated Hill Rd		Rural	Culverden	7391	NZ										2108561916		derekbishop30@gmail.com																						Cohort Standalone
+	Manvir	Kaur			122 St George St		Wiri	Auckland	2025	NZ										2108342615		kullarmani.222@outlook.com																						Cohort Standalone
+	Peter	Jeffery			33 Riverhead Rd		Huapai	Kumeu	810	NZ										21673175		pjeffery68@gmail.com																						Cohort Standalone
+	Taiseni	Mar.			9 Shayla Pl		Mangere East	Auckland	2024	NZ										226059226		mar.druma@yahoo.com																						Cohort Standalone
+	Mahnaz	Rafyee			25 Camden St		Redwood	Christchurch	8051	NZ										221550243		15361@burnside.school.nz																						Cohort Standalone
+	Mitchell	Tetai			11 Charles St		Prebbleton	Prebbleton	7604	NZ										221768062		smurfymitchell@gmail.com																						Cohort Standalone
+	Jaspreet	Grewal			61 Hillcrest Rd		Wiri	Auckland	2025	NZ										2108408207		jaspreetgrewal193@gmail.com																						Cohort Standalone
+	Kiwa	Atkins			59 waratah Street		Avonside	Christchurch	8061	NZ										210717942		atkins.kiwa@gmail.com																						Cohort Standalone
+	Douglas	Mear			62 Pohutukawa Dr		Hannahs Bay	Rotorua	3010	NZ										224288557		dougmear91@gmail.com																						Cohort Standalone
+	Swahani	Chandra			27 Morning Star Pl		Mount Albert	Auckland	1025	NZ										2102738202		c.swahani@gmail.com																						Cohort Standalone
+	Jeffrey	Mendoza			16A Charlenne Cl		Ranui	Auckland	612	NZ										2108853021		jeff_lionheart05@yahoo.com																						Cohort Standalone
+	Maria	Fotu			69 Plumley Cres		Mangere	Auckland	2022	NZ										210464766		fotumaria@gmail.com																						Cohort Standalone
+	Cherie	Tansey			52B Crawford Ave		Mangere	Auckland	2022	NZ										2108127610		tanseycherie@gmail.com																						Cohort Standalone
+	John	Goeger			1 Rongotai Rd		Rongotai	Wellington	6022	NZ										224167452		johngeoger@gmail.com																						Cohort Standalone
+	Ramesh	Odedara			42 Shoreham St		New Lynn	Auckland	600	NZ										273477989		rameshodedara999@gmail.com																						Cohort Standalone
+	Kamni	Prasad			66 Sunlands Dr		Manurewa East	Auckland	2102	NZ							92673151			92673151		kamniprasad@hotmail.com																						Cohort Standalone
+	Tira	Anderson			1 Tennyson Rd		Enderley	Hamilton	3214	NZ										221599194		tiramoke@gmail.com																						Cohort Standalone
+	Carol	Lawrence			315 River Rd		Kawerau	Kawerau	3127	NZ										272359085		clawrence@orcon.net.nz																						Cohort Standalone
+	Sitiveni	Tuirewa			471 Great South Rd Otahuhu		Mount Wellington	Auckland	1062	NZ										2102702846		turewas@gmail.com																						Cohort Standalone
+	Manpreet Singh	Bains			10b Matilda Street Seaview		Watlington	Timaru	7910	NZ										224357700		2189mani@gmail.com																						Cohort Standalone
+	Amit	Prasad			2/109 Aranui Rd		Mount Wellington	Auckland	1060	NZ										210459366		prasads4128@gmail.com																						Cohort Standalone
+	Kevin	Rangiawha			Unit5/564 Victoria Street Hamilton		Hamilton Central	Hamilton	3204	NZ										2102651717		kevingrangiawha@gmail.com																						Cohort Standalone
+	Neil	Hope			20 Keepa Ave		Paeroa	Paeroa	3600	NZ										273125609		b0b_is_coo@hotmail.com																						Cohort Standalone
+	Lumepa	Meleisea			7 Romilly Court		Papakura	Papakura	2110	NZ										212157802		lumepa.meleisea@gmail.com																						Cohort Standalone
+	Rererangi	Erehi			3/660 Gladstone Rd		Gisborne	Gisborne	4010	NZ										220659723		lalbrown450@gmail.com																						Cohort Standalone
+	Yu	Yao			3 Rhodes Pl		Pirimai	Napier	4112	NZ										2108799977		cosmos0509@gmail.com																						Cohort Standalone
+	Annalee	Delamere			15a Ford Street		Opotiki	Opotiki	3122	NZ										2041258298		annaleedelamere81@gmail.com																						Cohort Standalone
+	Sione Feke	Maasi			31 Tuck Nathan Dr		Kelston	Auckland	602	NZ										2102493619		sionefekemaasi@live.com																						Cohort Standalone
+	Ranjit	Singh			2/50 Middle Rd		Havelock North	Havelock North	4130	NZ										2041032698		singhrjt93@gmail.com																						Cohort Standalone
+	Steph	Brown			21 Tunbridge Wells Rd20 Ohau		Waitarere Beach	Levin	5510	NZ										279404170		stephanie_maree_brown@outlook.com																						Cohort Standalone
+	Samiuela	Letisi			6/256 Omaha Flats Rd		Rural	Warkworth	986	NZ										211019828		letisisammy123@gmail.com																						Cohort Standalone
+	Matilda	Antonio			92 Wallace Rd		Wiri	Auckland	2025	NZ										2108583415		tillyemori2015@gmail.com																						Cohort Standalone
+	Zanna	Karstens			108 Queen St		Hope	Richmond	7020	NZ										273444116		zannagadget@gmail.com																						Cohort Standalone
+	Arthur	Aramakutu			4halley Street		Riverdale	Gisborne	4010	NZ										278642001		taiara@xtra.co.nz																						Cohort Standalone
+	Carla	Matthews			2/1507A Opaki Kaiparoro Rd		Rural	Masterton	5882	NZ										273460657		cmnmatthews@gmail.com																						Cohort Standalone
+	John	Wilson - Connell			96 Olliviers Rd		Waltham	Christchurch	8011	NZ										2040227420		mydarklore@gmail.com																						Cohort Standalone
+	Rona	Edwards			7 Sherwood Drive pukete		Maeroa	Hamilton	3200	NZ										2108846441		ronaedwards1@hotmail.co.nz																						Cohort Standalone
+	Abdul	Nafeer			55 Mary Dreavar St		New Lynn	Auckland	600	NZ										211762794		nafeer007@gmail.com																						Cohort Standalone
+	Josh	Kopa			62 Cargill St		Papakura	Papakura	2110	NZ										2108418606		kanehard22@outlook.com																						Cohort Standalone
+	Yashika	Sethi			103 Vincent St		Eden Terrace	Auckland	1010	NZ										221635707		cuteyashu26@gmail.com																						Cohort Standalone
+	Anthony	Fotofili			21 Times Pl		Pukekohe	Pukekohe	2120	NZ										211669329		anthonyfotofili@gmail.com																						Cohort Standalone
+	Hitesh	Patel			2/123 White Swan Rd		Mount Eden	Auckland	1041	NZ										223525881		hiteshpatel268@gmail.com																						Cohort Standalone
+	Kuldeep	Pandher			1/376 Marotiri Rd		Rural	Mangakino	3492	NZ										273470006		kuldeeppandher25@gmail.com																						Cohort Standalone
+	Jenny	Silbery			3/6 Argus Pl		Glenfield	Auckland	627	NZ										21722411		kingfish9@me.com																						Cohort Standalone
+	Charlie	Cameron			22 Sanscrit Place		Lyttelton	Lyttelton	8082	NZ										275388886		charliecameronnz@gmail.com																						Cohort Standalone
+	Alesana	Ah Mann			7 Carey Place Otara Manukau		Flat Bush	Auckland	2023	NZ										2041270803		alesanaahmann@gmail.com																						Cohort Standalone
+	Dawn	Neame			112B BREEZES ROAD AVONDALE		Avondale	Christchurch	8061	NZ										272010939		dneame@xtra.co.nz																						Cohort Standalone
+	Rajwinder	Kaur			2/108 Great South Rd		Manurewa East	Auckland	2102	NZ										277775511		rajwinderaulakh241@gmail.com																						Cohort Standalone
+	Akosita	Vaeafisi			14 Vimy Pl		Mangere	Auckland	2022	NZ										2108265457		cedahvaea@gmail.com																						Cohort Standalone
+	Daniel	Nunns			23 Wilkie Cres		Woburn	Lower Hutt	5011	NZ										2102504531		wheeler17473@gmail.com																						Cohort Standalone
+	Sharon	Plumridge			63 Cornfoot St		Gonville	Wanganui	4501	NZ										272696609		sharon.plumridge2016@gmail.com																						Cohort Standalone
+	Kamalpreet	Kaur			2 Eden Cres		Eden Terrace	Auckland	1010	NZ										2102241247		preetkamal786@ymail.com																						Cohort Standalone
+Mrs	Yvonne Kahira	Harding			77 Clevedon Road		Papakura	AUCKLAND	2110	NZ										223191879		yvonneharding@gmail.com																						Cohort Standalone
+	Nelson	Hoskin			40 Second View Ave		Beachlands	Auckland	2018	NZ										274714800		hwyslr440@gmail.com																						Cohort Standalone
+Miss	Manveer	Kaur			30 Leslie Ave		Mount Albert	Auckland	1025	NZ										224295480		manveer0806@gmail.com																						Cohort Standalone
+	Te Ariki	Amiri			126A Waipuna Rd E		Mount Wellington	Auckland	1060	NZ										221884365		te.ariki.044@gmail.com																						Cohort Standalone
+Ms	Roxanne	Peneha			33casscade		Highland Park	Auckland	2010	NZ										284053149		roxannepeneha@gmail.com																						Cohort Standalone
+	Leanne	Te Ruruku			33 Park Ave		Tokoroa	Tokoroa	3420	NZ										21642467		leanne_teruruku@outlook.com																						Cohort Standalone
+	Brian	Langley			134B Harewood Rd		Papanui	Christchurch	8053	NZ										210507773		corvettbel@gmail.com																						Cohort Standalone
+	Veisinia	Ahio			190 Royal Rd		Henderson	Auckland	614	NZ										212649720		ahioveisinia@gmail.com																						Cohort Standalone
+	Devipriya	Ramachandran Nair			3/19 Symonds St		Onehunga	Auckland	1061	NZ										226516679		isai.devi@gmail.com																						Cohort Standalone
+	Mukesh	Sharma			89 Hillcrest Rd		Wiri	Auckland	2025	NZ										224299209		mukesh22011992@gmail.com																						Cohort Standalone
+	Beulah	Tukiwaho			1 Rarere Terrace		Kerikeri	Kerikeri	230	NZ										210559600		tbeulaht@hotmail.com																						Cohort Standalone
+	Areka	McQuinn			3/140 Westhead Rd		Rural	Waiuku	2683	NZ										211795020		lxmcquinn@gmail.com																						Cohort Standalone
+	Danny	Mitchell			7 Barber St		Foxton Beach	Foxton	4815	NZ										279035469		dannymitchell1944@gmail.com																						Cohort Standalone
+	Pratik	Mistry			16D Roick Parade		Kelston	Auckland	602	NZ										223235038		er.pratik220@gmail.com																						Cohort Standalone
+	Karen	Ridgewell			57B Tiromoana Rd		Raumati Beach	Paraparaumu	5032	NZ										211879087		leonkaren67@gmail.com																						Cohort Standalone
+	Harley	Goodin Clark			14 Nearco St		Randwick Park	Auckland	2105	NZ										2108393176		harleygoodin25@gmail.com																						Cohort Standalone
+	Unaloto	Hiko			33 Wimbledon Cres		Glen Innes	Auckland	1072	NZ										2102557868		unalotohiko@hotmail.com																						Cohort Standalone
+Ms	Kim	Stewart			9maraeroa Rd Mamaku 3020		Mamaku	Mamaku	3020	NZ										272339772		kimmariestewart64@gmail.com																						Cohort Standalone
+Mr	Paul	Te Kiri			71 Folkestone Dr		Longlands	Hastings	4120	NZ										21817979		prophets@clear.net.nz																						Cohort Standalone
+Mr	Kanwaljot	Sidhu			22 Sequoia Pl		Forrest Hill	Auckland	620	NZ										211239594		kanwaljot_sidhu@yahoo.co.in																						Cohort Standalone
+	Chinthaka	Samarasinghe			1/62 Lucerne Rd		Remuera	Auckland	1050	NZ										223940757		aluth1121@gmail.com																						Cohort Standalone
+Ms	Janae	Kelly			1 A Duke Street Ngaruawahia NZ		Ngaruawahia	Ngaruawahia	3720	NZ										204072728		Honourkelly11@gmail.com																						Cohort Standalone
+	Danni-Jane	Cole			1/1115A Ahuroa Rd		Rural	Warkworth	981	NZ										2108110398		djcsoccer@hotmail.com																						Cohort Standalone
+	Jeney	Shaw			2/218 Airfield Rd		Rural	Papakura	2582	NZ										2102580678		shawjeney@gmail.com																						Cohort Standalone
+	Pamela	Schrader			2owen street		Durie Hill	Wanganui	4500	NZ										210685442		pamschrader11@gmail.com																						Cohort Standalone
+	Ashish	Shah			1/39 Cavendish Dr		Papatoetoe	Auckland	2104	NZ										223521199		ashish_1910@yahoo.com																						Cohort Standalone
+	Bev	Ritchie			1/77 Parkhurst Rd		Rural	Helensville	874	NZ										2102302033		bev_ritchie@hotmail.com																						Cohort Standalone
+Mrs	Janice	Bradley			3/58 Maich Rd		MANUREWA	Auckland	2102	NZ										211652910		jaybee5980@gmail.com																						Cohort Standalone
+	Te Ru	Huriwai			51 Weld St		Kelburn	Wellington	6012	NZ										226023525		teruistheman@gmail.com																						Cohort Standalone
+	Gary	Thomas			128 Heretaunga St		Palmerston North	Palmerston North	4414	NZ										274844984		gthomas@takaro.co.nz																						Cohort Standalone
+	Arthur	Auffray-Baude			2/5 Flaxdale St		Birkdale	Auckland	626	NZ										220488009		arthur@auffray.fr																						Cohort Standalone
+	Iutita	Filoa			2/27 Earlsworth Road		Mangere	Auckland	2022	NZ										2102917266		violeti_08@hotmail.com																						Cohort Standalone
+	Markorie	Allan			2/1218 Old Christchurch Rd		Rural	Hokitika	7882	NZ										21359245		marj@cranberriesnz.co.nz																						Cohort Standalone
+	Celia	Salter			14 Waipuia Pl		Rosedale	Auckland	632	NZ										211050771		celiasalter1@gmail.com																						Cohort Standalone
+Mrs	Caroline	Heta			79 Niblett St		Durie Hill	Wanganui	4500	NZ										2102368359		caroline.heta@gmail.com																						Cohort Standalone
+	Glen	McCracken			1/11 WATKIN Dr		Rural	Waikouaiti	9471	NZ										212924176		glenmccracken37@gmail.com																						Cohort Standalone
+	Sandeep	Singh			20 Kingdale Rd		Henderson	Auckland	610	NZ										211336444		benewalsandeep531@gmail.com																						Cohort Standalone
+Mr	Harold	McFarold			Wallace Terrace 45		Kihikihi	Te Awamutu	3800	NZ										274883666		tinybaegldc4@gmail.com																						Cohort Standalone
+	Denise	Edwards			20 ngatira place		Clendon Park	Auckland	2103	NZ										210730635		delizabeth375@gmail.com																						Cohort Standalone
+Mr	David Veli	Smith			19 Amber Crecent		Judea	Tauranga	3110	NZ										273265556		dsgrace56@gmail.com																						Cohort Standalone
+	Saleshni	Devia			52 Malaspina Pl		Wiri	Auckland	2025	NZ										212949017		shirlee.devia07@yahoo.co.nz																						Cohort Standalone
+	Karen	Trocha			400 Akina St		Saint Leonards	Hastings	4122	NZ										212445877		karentrocha70@gmail.com																						Cohort Standalone
+	Barry	Harvey			23 South Terrace		Darfield	Darfield	7510	NZ										272202240		barryh815@gmail.com																						Cohort Standalone
+	Mahbuba	Khan			43 Farrelly Avenue		Mount Eden	Auckland	1041	NZ							96202603			96202603		mazizkhan14@gmail.com																						Cohort Standalone
+	Michael	Kapea			1/153 Bruce Mclaren Rd		Ranui	Auckland	612	NZ										2040525319		mikekapea16@gmail.com																						Cohort Standalone
+	Divyabharathi	Kulandaivelu			38 Bel Air Dr		Onehunga	Auckland	1061	NZ										226469955		divyabharathiva@gmail.com																						Cohort Standalone
+	Julia	Magrs Lee			9 Elizabeth St		Rolleston	Rolleston	7614	NZ										276133303		juliamagrslee@gmail.com																						Cohort Standalone
+	Jojo	Sciascia			15 Avis Ave		Wiri	Auckland	2025	NZ										2102525885		jojosciascia@gmail.com																						Cohort Standalone
+	Glenn	Macintyre			1 Haycock Place Richmond Nelson		Bishopdale	Nelson	7011	NZ										277246833		luffy54321@hotmail.com																						Cohort Standalone

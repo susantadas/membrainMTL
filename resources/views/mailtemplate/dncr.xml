@@ -1,0 +1,13 @@
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:rtw="http://rtw.dncrtelem" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <rtw:WashNumbers soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <TelemarketerId xsi:type="xsd:string">36441</TelemarketerId>
+         <TelemarketerPassword xsi:type="xsd:string">Bra1nWa5h3d!!!</TelemarketerPassword>
+         <ClientReferenceId xsi:type="xsd:string">SL0001</ClientReferenceId>
+         <NumbersToWash xsi:type="rtw:ArrayOf_xsd_anyType" soapenc:arrayType="xsd:anyType[]">
+            <Number xsi:type="xsd:string">0412080681</Number>
+         </NumbersToWash>
+      </rtw:WashNumbers>
+   </soapenv:Body>
+</soapenv:Envelope>

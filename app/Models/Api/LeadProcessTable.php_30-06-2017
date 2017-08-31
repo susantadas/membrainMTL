@@ -1,0 +1,338 @@
+<?php
+namespace App\Models\Api;
+use Illuminate\Database\Eloquent\Model;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Response;
+use DB;
+class LeadProcessTable extends Model
+{
+    protected $connection = 'mysql';
+    protected $primaryKey = 'id';
+    protected $table = 'fraud_detection';
+    public static function validator($input){
+        $rules = array(
+            'email_address'=>'required|string|email|max:255|unique:clients',
+            'phone'=>'required|string|min:10',
+            'first_name'=>'required|string|max:255',
+            'last_name'=>'required|string|max:255',
+            'postcode'=>'required|string|max:255',
+        );
+        return Validator::make($input,$rules);
+    }
+
+    public function apiData($data){
+        $errors = array();
+        $emailValidation = $this->emailAddressPreProcessing($data['email']);
+        if($emailValidation=='0'){
+            $errors[] = 'Invalid Email Address';
+        }
+        $pnpps = $this->phoneNumberPreProcessing($data['phone'],$data['countryCode']);
+        if($pnpps['status']=='0'){
+            $errors[] = 'Invalid Phone Number';
+        } else if($pnpps['status']=='2') {
+            $errors[] = 'Invalid Phone Number and country code';
+        } else {
+            $data['phone'] = $pnpps['phone'];
+        }
+        $duplicationChecking = $this->duplicationChecking($data['email'],$data['phone'],$data['countryCode']);
+        if($duplicationChecking=='0'){
+            $errors[] = 'Duplicate Consumer';
+        }        
+        $nameTitle = $this->nameTitle($data['firstName'],$data['lastName']);
+        if($nameTitle=='0'){
+            $errors[] = 'Invalid characters in First Name/Last Name';
+        }        
+        $addressFormatting = $this->addressFormatting($data);
+        if($addressFormatting=='1'){
+            $errors[] = 'Invalid Invalid ZIP/Post code';
+        } else if ($addressFormatting=='2') {
+            $errors[] = 'Consumer does not qualify';
+        } else {
+            $data['postcode'] = $addressFormatting['postcode'];
+            $data['city'] = $addressFormatting['city'];
+            $data['address1'] = $addressFormatting['address1'];
+            $data['address2'] = $addressFormatting['address2'];
+        }
+        $birthdateAgeAgeRange = $this->birthdateAgeAgeRange($data);
+        if($birthdateAgeAgeRange=='1'){
+            $errors[] = 'Invalid birthdate';
+        } elseif ($birthdateAgeAgeRange=='2') {
+            $errors[] = 'Invalid age';
+        } elseif ($birthdateAgeAgeRange=='3') {
+            $errors[] = 'Invalid age range';
+        }
+
+        $phoneAddress = $this->phoneAddress($data);
+        $emailValidationThirdParty = $this->emailValidationThirdParty($data);
+        $phoneValidation = $this->phoneValidation($data);
+        $phoneValidationDncr = $this->phoneValidationDncr($data);
+        $genderValidation = $this->genderValidation($data['firstName'],$data['lastName'],$data['countryCode'],$data['gender']);
+        if(!empty($genderValidation)){
+            $data['firstName'] = $genderValidation['firstName'];
+            $data['lastName'] = $genderValidation['lastName'];
+            $data['gender'] = $genderValidation['gender'];
+            $data['countryCode'] = $genderValidation['countryCode'];
+        }
+        
+        if(!empty($errors)){
+            $LAdata = array('supplier_id' => $data['supplier_id'],'source' => $data['supplier_id'],'client_id' => $data['client_id'],'campaign_id' => $data['campaign_id'],'data' => json_encode($data),'received' => date('Y-m-d h:i:s'),'errors' => 'True');            
+            if(in_array('Duplicate Consumer', $errors)) {
+                $LAdata['disposition'] = 'Duplicate Consumer (Duplicate)';
+                DB::table('lead_audit')->insert($LAdata);
+            } else {
+                $LAdata['disposition'] = ucwords(implode(', ',$errors)).' (Rejected)';
+                DB::table('lead_audit')->insert($LAdata);
+            } 
+            $data['error'] = ucwords(implode(', ',$errors));
+            $data['audi_flag'] = 'True';
+        } else {
+            $LAdata = array('supplier_id' => $data['supplier_id'],'source' => $data['supplier_id'],'client_id' => $data['client_id'],'campaign_id' => $data['campaign_id'],'data' => json_encode($data),'received' => date('Y-m-d h:i:s'),'errors' => 'False','disposition' => 'Accepted');
+            DB::table('lead_audit')->insert($LAdata);
+            $LHdata = array('client_id' => $data['client_id'],'campaign_id' => $data['campaign_id'],'data' => $data['email'],'client_duplicate' => 0,'delivered' => date('Y-m-d h:i:s'));
+            $exitCpId = DB::table('lead_history')->where('campaign_id','=',$LHdata['campaign_id'])->get(['id']);
+            if(empty($exitCpId)) {
+                DB::table('lead_history')->insert($LHdata);
+            }
+            $data['audi_flag'] = 'False';
+        }
+        return $data;
+    }
+    /* Start Phone & Email Basic Validation & De-Duping 1.) Email Address Pre-Processing */
+    public function emailAddressPreProcessing($email){
+        $regex = '/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/';
+        $_email = strtolower($email); //Standardised
+        $_domainName1 = explode('@',$_email);
+        $_domainName = end($_domainName1);
+        $domainBlacklist = DB::table('domain_blacklist')->where('domain',$_domainName)->get(['id']); //Not on Domain Blacklist       
+        $emailBlacklist = DB::table('email_blacklist')->where('email_address',$_email)->get(['id']); //Not on Email Blacklist
+        $emailValid1 = (preg_match($regex, $_email)) ? 1 : 0; //Syntax Checked
+        $emailValid2 = ($domainBlacklist->count()<='0') ? 1 : 0;
+        $emailValid3 = ($emailBlacklist->count()<='0') ? 1 : 0;
+        $emailValid = ($emailValid1 != 0 ? ($emailValid2 != 0 ? ($emailValid3 != 0 ? 1 : 0) : 0) : 0);
+        return $emailValid;
+    }
+    /* End Phone & Email Basic Validation & De-Duping 1.) Email Address Pre-Processing */
+    /* Start Phone & Email Basic Validation & De-Duping 2.) Phone Number Pre-Processing */
+    public function phoneNumberPreProcessing($phone,$country){
+        $_phone = preg_replace('/[^0-9+]/', '', $phone);
+        $carray = array('AU','NZ','US','CA','UK','GB');
+        $valid = 0;
+        $bforelength = strlen($_phone);
+        if(in_array($country, $carray)){
+            if(strrpos($_phone,'+64',-$bforelength)!== false){
+                $phoneN = substr_replace($_phone,'0',0,3);
+            } else if(strrpos($_phone,'+61',-$bforelength)!== false){
+                $phoneN = substr_replace($_phone,'0',0,3);
+            } else if(strrpos($_phone,'+1',-$bforelength)!== false){
+                $phoneN = substr_replace($_phone,'1',0,2);
+            } else if(strrpos($_phone,'+44',-$bforelength)!== false){
+                $phoneN = substr_replace($_phone,'0',0,3);
+            } else if(strrpos($_phone,'0064',-$bforelength)!== false){
+                $phoneN = substr_replace($_phone,'0',0,4);
+            } else if(strrpos($_phone,'0061',-$bforelength)!== false){
+                $phoneN = substr_replace($_phone,'0',0,4);
+            } else if(strrpos($_phone,'0111',-$bforelength)!== false){
+                $phoneN = substr_replace($_phone,'1',0,4);
+            } else if(strrpos($_phone,'0044',-$bforelength)!== false){
+                $phoneN = substr_replace($_phone,'0',0,4);
+            } else {
+                $phoneN=$_phone;
+            }
+
+            $afterlength = strlen($phoneN);
+            if($country=='AU' && $afterlength=='10'){
+                $valid = 1;
+            } else if($country=='NZ' && ($afterlength >= '9' || $afterlength <= '10')) {
+                $valid = 1;
+            } else if(($country=='UK' || $country=='GB') && ($afterlength >= '10' || $afterlength <= '11')) {
+                $valid = 1;
+            } else if(($country=='US' || $country=='CA') && $afterlength == '11') {
+                $valid = 1;
+            } else {
+                $valid = 0;
+            }
+        } else {
+            $phoneN = $_phone;
+            $valid = 2;
+        }
+        return array('status'=>$valid,'phone'=>$phoneN);
+    }
+    /* End Phone & Email Basic Validation & De-Duping 2.) Phone Number Pre-Processing */
+    /* Start Phone & Email Basic Validation & De-Duping 3.) Duplication Checking */
+    public function duplicationChecking($email,$phone,$country){
+        $_donotcall = DB::table('membrain_global_do_not_call')->where('country_code','=',$country)->where('phone_number','=',$phone)->get(['id']); //Membrain Global Do Not Call List
+        $_ces = DB::table('client_email_suppression')->where('data',$email)->get(['id']); //Client-Supplied Lists email suppression
+        $_cps = DB::table('client_phone_suppression')->where('data',$phone)->get(['id']); //Client-Supplied Lists email suppression
+        $_lhe = DB::table('lead_history')->where('data',$email)->get(['id']); //Membrain Lead Delivery Lists email
+        $_lhp = DB::table('lead_history')->where('data',$phone)->get(['id']); //Membrain Lead Delivery Lists phone
+        $donotcall = ($_donotcall->count()<='0') ? 1 : 0;
+        $ces = ($_ces->count()<='0') ? 1 : 0;
+        $cps = ($_cps->count()<='0') ? 1 : 0;
+        $lhe = ($_lhe->count()<='0') ? 1 : 0;
+        $lhp = ($_lhp->count()<='0') ? 1 : 0;
+        $validdata = ($donotcall > 0 ? ($ces > 0 ? ($cps > 0 ? ($lhe > 0 ? ($lhp ? 1 : 0) : 0) : 0) : 0) : 0);
+        return $validdata;
+    }
+    /* End Phone & Email Basic Validation & De-Duping 3.) Duplication Checking */
+    /* Start Concurrent Data Reformatting, Enhancement and Validation 1.) Name / Title / Gender Processing */
+    public function genderValidation($firstName,$lastName,$countryCode,$gender){
+        $_firstName = preg_replace('/[^a-zA-Z ]/', '', $firstName);
+        $_lastName = preg_replace('/[^a-zA-Z ]/', '', $lastName);
+        if($countryCode=='UK'){
+            $_countryCodes = 'GB';
+        } else {
+            $_countryCodes = $countryCode;
+        }
+
+        $url = "http://gender-api.com/get?key=BTvunEepSkbLZULazE&split=".$_firstName.' '.$_lastName."&country=".$_countryCodes;
+        $client = new Client();
+        $res = $client->get($url);
+        $result = $res->getBody();
+        $_result = json_decode($result);        
+        if($_result->gender=='unknown'){
+            $_gender = $gender;            
+        } else if($_result->gender=='') {
+            $_gender = $gender;
+        } else {
+            $_gender = $_result->gender;
+        }
+
+        $_fname = ($_result->first_name !='') ? $_result->first_name : $firstName;
+        $_lname = ($_result->last_name !='' && $_result->last_name != $firstName) ? $_result->last_name : $lastName;
+        $_countryCode = $countryCode;
+        return array('firstName'=>ucwords($_fname),'lastName'=>ucwords($_lname),'gender'=>ucwords($_gender),'countryCode'=>ucwords($_countryCode));
+    }
+
+    public function nameTitle($firstName,$lastName){
+        $name = preg_replace('/[a-zA-Z ]/', '', $firstName).' '.preg_replace('/[a-zA-Z ]/', '', $lastName);        
+        if(preg_match('/[a-zA-Z ]/', $firstName) && preg_match('/[a-zA-Z ]/', $lastName)){
+            $_name = DB::table('name_blacklist')->where('name',$name)->get(['id']);
+            $name = ($_name->count()<='0') ? 1 : 0;
+        } else {
+            $name = 0;
+        }
+        return $name;
+    }
+    /* End Concurrent Data Reformatting, Enhancement and Validation 1.) Name / Title / Gender Processing */
+    /* Start Concurrent Data Reformatting, Enhancement and Validation 2.) Address */
+    public function addressFormatting($data){
+        $ZIPREG=array(
+            "US"=>"^\d{5}([\-]?\d{4})?$",
+            "UK"=>"^(GIR|[A-Z]\d[A-Z\d]??|[A-Z]{2}\d[A-Z\d]??)[ ]??(\d[A-Z]{2})$",
+            "GB"=>"^(GIR|[A-Z]\d[A-Z\d]??|[A-Z]{2}\d[A-Z\d]??)[ ]??(\d[A-Z]{2})$",
+            "CA"=>"^([ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ])\ {0,1}(\d[ABCEGHJKLMNPRSTVWXYZ]\d)$",
+            "AU"=>"^(0[289][0-9]{2})|([1345689][0-9]{3})|(2[0-8][0-9]{2})|(290[0-9])|(291[0-4])|(7[0-4][0-9]{2})|(7[8-9][0-9]{2})$",
+            "NZ"=>"^(0[289][0-9]{2})|([1345689][0-9]{3})|(2[0-8][0-9]{2})|(290[0-9])|(291[0-4])|(7[0-4][0-9]{2})|(7[8-9][0-9]{2})$",
+        );
+
+        if($data['countryCode']=='UK' || $data['countryCode']=='CA' || $data['countryCode']=='GB'){
+            $data['postcode'] = strtoupper(wordwrap($data['postcode'] , 3 , ' ' , true ));
+        } else {
+            $data['postcode'] = strtoupper($data['postcode']);
+        }
+        if(isset($ZIPREG[$data['countryCode']])){
+            if (!preg_match("/".$ZIPREG[$data['countryCode']]."/i",$data['postcode'])){
+                $postcode = 1;
+            }
+        }
+
+        $_postcode = DB::table('postcode')->where('country_code','=',$data['countryCode'])->where('postcode','=',$data['postcode'])->get(['id']);        
+        $postcode1 = (empty($_postcode)) ? 1 : 0;
+
+        $_campaigns = DB::table('campaigns')->where('criteria_state','=',$data['countryCode'])->orWhere('criteria_postcode','=',$data['postcode'])->get(['id']);        
+        $campaigns = (empty($_campaigns)) ? 1 : 0;
+
+        $postcode = ($postcode1==1 && $postcode==1) ? 1 : 0;
+
+        $data['city'] = strtoupper($data['city']);
+        $data['address1'] = ucwords(str_replace(array('Avenue','Street'), array('Ave','St'), $data['address1']));
+        $data['address2'] = ucwords(str_replace(array('Avenue','Street'), array('Ave','St'), $data['address2']));
+        if($postcode=='1'){
+            return 1; //'Invalid postcode';
+        } else if($campaigns=='1'){
+            return 2; //'Consumer does not qualify - Address'
+        } else {
+            return $data;
+        }
+    }
+    /* End Concurrent Data Reformatting, Enhancement and Validation 2.) Address */
+    /* Start Concurrent Data Reformatting, Enhancement and Validation 3.) Birthdate / Age / Age Range */
+    public function birthdateAgeAgeRange($data){
+        $Y1 = date('Y',strtotime($data['birthdate']));
+        $Y2 = date('Y', strtotime('-100 year'));
+        $Y3 = date('Y');
+
+        if($Y1 <= $Y3 && $Y1 >= $Y2){
+            $data['birthdate'] = date('Y-m-d',strtotime($data['birthdate']));
+            $birthDay = 0;
+        } else {
+            $birthDay = 1;
+        }
+
+        if(!preg_match('/[0-9]/', $data['age'])){
+            $age = 2;
+        } else if($data['age'] < 1 && $data['age'] > 100){
+            echo $age = 2;
+        } else {
+            $age = 0;
+        }
+
+        $_ageRange = explode('-', $data['ageRange']);
+        if(!preg_match('/[0-9]/', $_ageRange[0]) && !preg_match('/[0-9]/', $_ageRange[1])){
+            $ageRange = 3;
+        } else if(($_ageRange[0] < 2 && $_ageRange[0] > 100) || ($_ageRange[1] < 2 && $_ageRange[1] > 100)){
+            $ageRange = 3;
+        } else {
+            $ageRange = 0;
+        }
+
+        $_campaigns = DB::table('campaigns')->where('criteria_age','=',$data['ageRange'])->get(['id']);        
+        $campaigns = ($_campaigns->count()<='0') ? 1 : 0;
+
+        if($birthDay=='1'){
+            return 1; //'Invalid postcode';
+        } else if($age=='2'){
+            return 2; //'Consumer does not qualify - Address'
+         } else if($ageRange=='3'){
+            return 3; //'Consumer does not qualify - Address'
+        } else {        
+            return 0;
+        }
+    }
+    /* End Concurrent Data Reformatting, Enhancement and Validation 3.) Birthdate / Age / Age Range */
+    /* Start Concurrent Data Reformatting, Enhancement and Validation 4.) Phone / Address */
+    public function phoneAddress($data){
+       return 1;
+    }
+    /* End Concurrent Data Reformatting, Enhancement and Validation 4.) Phone / Address */
+    /* Start Concurrent Data Reformatting, Enhancement and Validation 5.) Email Address */
+    public function emailAddress($data){
+       return 1;
+    }
+    /* End Concurrent Data Reformatting, Enhancement and Validation 5.) Email Address */
+    /* Start Data Validation 1.) Email Validation – Third Party */
+    public function emailValidationThirdParty($data){
+        return 1;
+    }
+    /* End Data Validation 1.) Email Validation – Third Party */
+    /* Start Data Validation 2.) Phone Validation */
+    public function phoneValidation($data){
+        return 1;
+    }
+    /* End Data Validation 2.) Phone Validation */
+    /* Start Data Validation 3.) Phone DNCR */
+    public function phoneValidationDncr($data){
+        return 1;
+    }
+    /* End Data Validation 3.) Phone DNCR */
+    public $timestamps = false;
+    protected $fillable = array(
+        'id',
+        'email_address',
+        'phone',
+        'first_name',
+        'last_name',
+        'postcode',
+        'received',
+    );
+}

@@ -1,0 +1,453 @@
+<?php
+namespace Tests\Unit\User;
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Api\LeadProcessTable;
+use App\Models\Api\LeadProcessValidation;
+use DB;
+class Leadprocess extends TestCase
+{
+    public function test_for_blank_supplier() {
+        $data = array("campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessValidation();
+        $result = $vali->validateSupplier($data);
+        $this->assertEquals(0,$result);
+        print_r("*********************************************************************\nDescription: No supplier paramiter present in this array \nInput: Supplier ID = '' \nOutput: invalid Supplier.\nResult: PASS\n*********************************************************************\n\n");
+	} 
+
+    public function test_for_blank_supplier_id() {
+        $data = array("Supplier"=>array("source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessValidation();
+        $result = $vali->validateSupplier($data);
+        $this->assertEquals(0,$result);
+        print_r("*********************************************************************\nDescription: No supplier id paramiter present in this array \nInput: Supplier ID = '' \nOutput: invalid Supplier.\nResult: PASS\n*********************************************************************\n\n");
+    }
+
+    public function test_for_blank_supplier_incr_id() {
+        $data = array("Supplier"=>array("ID"=>"407b20e04c238xssadsab3feda82fd167e6068a","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        
+        $SuppPubId = DB::table('suppliers')->where('public_id','=',$data['Supplier']['ID'])->where('active','=','1')->get(['id']);        
+        if(empty($SuppPubId[0])){
+            $valid = 0;
+        }
+
+        $this->assertEquals(0,$valid);
+        $massage = "*********************************************************************\nDescription: Incorrect supplier id present in this array \nInput: Supplier ID = '".$data['Supplier']['ID']."' \nOutput: invalid Supplier.\nResult: PASS\n*********************************************************************\n\n";
+        print_r($massage);
+    }
+
+    public function test_for_blank_supplier_inactv_id() {
+        $data = array("Supplier"=>array("ID"=>"0cdae0d8e49f6337450bb912db521e49","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        
+        $SuppPubId = DB::table('suppliers')->where('public_id','=',$data['Supplier']['ID'])->where('active','=','1')->get(['id']);        
+        if(empty($SuppPubId[0])){
+            $valid = 0;
+        }
+
+        $this->assertEquals(0,$valid);
+        $massage = "*********************************************************************\nDescription: Inactive supplier id present in this array \nInput: Supplier ID = '".$data['Supplier']['ID']."' \nOutput: invalid Supplier.\nResult: PASS\n*********************************************************************\n\n";
+        print_r($massage);
+    }
+
+    public function test_for_blank_supplier_valid_id() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        
+        $SuppPubId = DB::table('suppliers')->where('public_id','=',$data['Supplier']['ID'])->where('active','=','1')->get(['id']);        
+        if(!empty($SuppPubId[0])){
+            $valid = 0;
+        }
+
+        $this->assertEquals(0,$valid);
+
+        $massage = "*********************************************************************\nDescription: valid & active supplier id present in this array \nInput: Supplier ID = '".$data['Supplier']['ID']."' \nOutput: Valid Supplier.\nResult: PASS\n*********************************************************************\n\n";
+        print_r($massage);
+    }
+
+    public function test_for_blank_campaign() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessValidation();
+        $result = $vali->validateCampaignr($data);
+        $this->assertEquals(0,$result);
+
+        $massage = "*********************************************************************\nDescription: No campaign paramiter present in this array \nInput: Supplier ID = '' \nOutput: invalid campaign.\nResult: PASS\n*********************************************************************\n\n";
+        print_r($massage);
+    } 
+    public function test_for_blank_campaign_id() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("value"=>"false"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessValidation();
+        $result = $vali->validateCampaignr($data);
+        $this->assertEquals(0,$result);
+
+        $massage = "*********************************************************************\nDescription: No campaign id paramiter present in this array \nInput: Campaign ID = '' \nOutput: invalid campaign.\nResult: PASS\n*********************************************************************\n\n";
+        print_r($massage);
+    }
+
+
+    public function test_for_blank_campaign_incr_id() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7csvdsc1b602de0ccb2","value"=>"false"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        
+        $CampPubId = DB::table('campaigns')->where('public_id','=',$data['campaign']['ID'])->where('active','=','1')->get(['id','client_id']);
+        if(empty($CampPubId[0])){
+            $valid = 0;
+        }
+        $this->assertEquals(0,$valid);
+        $massage = "*********************************************************************\nDescription: Incorrect campaign id paramiter present in this array \nInput: Campaign ID = '".$data['campaign']['ID']."' \nOutput: invalid campaign.\nResult: PASS\n*********************************************************************\n\n";
+        print_r($massage);
+    }
+
+    public function test_for_blank_campaign_inactv_id() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"f08db846e431b346a4020fd249e1717d"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        
+        $CampPubId = DB::table('campaigns')->where('public_id','=',$data['campaign']['ID'])->where('active','=','1')->get(['id','client_id']);
+        if(empty($CampPubId[0])){
+            $valid = 0;
+        }        
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: Inactive campaign id paramiter present in this array \nInput: Campaign ID = '".$data['campaign']['ID']."' \nOutput: invalid campaign.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_blank_campaign_valid_id() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"sss@Outlook.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        
+        $CampPubId = DB::table('campaigns')->where('public_id','=',$data['campaign']['ID'])->where('active','=','1')->get(['id','client_id']);
+        if(!empty($CampPubId[0])){
+            $valid = 0;
+        }
+        if($result==0){
+            $massage = "*********************************************************************\nDescription: Valid & active campaign id paramiter present in this array \nInput: Campaign ID = '".$data['campaign']['ID']."' \nOutput: Valid campaign.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+
+    public function test_for_blank_consumer() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"));
+        $vali = new LeadProcessValidation();
+        $result = $vali->validateConsumer($data);
+        if($result==0){
+            $massage = "*********************************************************************\nDescription: No consumer paramiter present in this array \nInput: Consumer = '' \nOutput: Missing consumer.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$result);
+    }
+
+    public function test_for_empty_consumer() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array());
+        $vali = new LeadProcessValidation();
+        $result = $vali->validateConsumer($data);
+        if($result==0){            
+            $massage = "*********************************************************************\nDescription: No consumer paramiter present in this array \nInput: Consumer = '' \nOutput: Missing consumer.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$result);
+    }
+
+    public function test_for_payloadvalidation() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"","phone"=>"","title"=>"","firstName"=>"","lastName"=>"","birthdate"=>"","age"=>"","ageRange"=>"","gender"=>"","address1"=>"","address2"=>"","city"=>"","state"=>"","postcode"=>"","countryCode"=>""));
+        $vali = new LeadProcessTable();
+        $result = $vali->apiData($data['consumer']);
+        if(!empty($result['lead_disposition']['error'])){
+            $valid = 0;
+        } else {
+           $valid = 1; 
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription:Blank consumer paramiter present in this array \nInput: Consumer = '' \nOutput: error [".implode(', ',$result['lead_disposition']['error'])."].\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_payloadvalidation_particulardata() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ss@ss.com","phone"=>"","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->apiData($data['consumer']);
+        if(!empty($result['lead_disposition']['error'])){
+            $valid = 0;
+        } else {
+           $valid = 1; 
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription:Particular blank consumer paramiter present in this array \nInput: Consumer phone = '' \nOutput: error [".implode(', ',$result['lead_disposition']['error'])."].\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+
+    public function test_for_consumer_emailpreprocessing() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->emailAddressPreProcessing($data['consumer']['email']);
+        if($result=='0'){
+            $errors = 'Invalid Email Address';
+            $valid = 0;
+        } else if($result=='2'){
+            $errors = 'Required email id';
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription:Blank consumer email id present in this array \nInput: Consumer email = '".$data['consumer']['email']."' \nOutput: error [".$errors."].\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_emailpreprocessing2() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ss@","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->emailAddressPreProcessing($data['consumer']['email']);
+        if($result=='0'){
+            $errors = 'Invalid Email Address';
+            $valid = 0;
+        } else if($result=='2'){
+            $errors = 'Required email id';
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription:Invalid consumer email id present in this array \nInput: Consumer email = '".$data['consumer']['email']."' \nOutput: error [".$errors."].\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_emailpreprocessing3() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ss@gmail.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->emailAddressPreProcessing($data['consumer']['email']);
+        if($result=='0'){
+            $valid = 1;
+        } else if($result=='2'){
+            $valid = 1;
+        } else {
+            $valid = 0;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription:Valid consumer email id present in this array \nInput: Consumer email = '".$data['consumer']['email']."' \nOutput: Valid Email Addresss.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+   public function test_for_consumer_phonepreprocessing() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ss@gmail.com","phone"=>"","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->phoneNumberPreProcessing($data['consumer']['phone'],$data['consumer']['countryCode']);
+        if($result['status']=='0'){
+            $errors = 'Invalid Phone Number';
+            $valid = 0;
+        } else if($result['status']=='2') {
+            $errors = 'Invalid Phone Number and country code';
+            $valid = 0;
+        } else if($result['status']=='3') {
+            $errors = 'Required phone number';
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: Blank consumer phone present in this array \nInput: Consumer phone = '".$data['consumer']['phone']."' \nOutput: error [".$errors."].\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_phonepreprocessing2() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ss@gmail.com","phone"=>"006189523640289","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->phoneNumberPreProcessing($data['consumer']['phone'],$data['consumer']['countryCode']);
+        if($result['status']=='0'){
+            $errors = 'Invalid Phone Number';
+            $valid = 0;
+        } else if($result['status']=='2') {
+            $errors = 'Invalid Phone Number and country code';
+            $valid = 0;
+        } else if($result['status']=='3') {
+            $errors = 'Required phone number';
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: Invalid consumer phone present in this array \nInput: Consumer phone = '".$data['consumer']['phone']."' \nOutput: error [".$errors."].\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_phonepreprocessing3() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ss@gmail.com","phone"=>"006189523640289","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"IN"));
+        $vali = new LeadProcessTable();
+        $result = $vali->phoneNumberPreProcessing($data['consumer']['phone'],$data['consumer']['countryCode']);
+        if($result['status']=='0'){
+            $errors = 'Invalid Phone Number';
+            $valid = 0;
+        } else if($result['status']=='2') {
+            $errors = 'Invalid Phone Number and country code';
+            $valid = 0;
+        } else if($result['status']=='3') {
+            $errors = 'Required phone number';
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: Invalid consumer phone & country code countryCode  present in this array \nInput: Consumer phone = '".$data['consumer']['phone']."' \nOutput: error [".$errors."].\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_phonepreprocessing4() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ss@gmail.com","phone"=>"0061895236402","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->phoneNumberPreProcessing($data['consumer']['phone'],$data['consumer']['countryCode']);
+        if($result['status']=='0'){
+            $valid = 1;
+        } else if($result['status']=='2') {
+            $valid = 1;
+        } else if($result['status']=='3') {
+            $valid = 1;
+        } else {
+            $valid = 0;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: Valid consumer phone present in this array \nInput: Consumer phone = '".$data['consumer']['phone']."' \nOutput: Valid Phone Number (".$result['phone'].").\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_duplicationchecking_lead_history() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"css@dsfsd.com","phone"=>"0123415342","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"NZ"));
+        $vali = new LeadProcessTable();
+        $result = $vali->duplicationChecking($data['consumer']['email'],$data['consumer']['phone'],$data['consumer']['countryCode']);
+        if($result=='0'){
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: Duplicate checking phone & email present in this array \nInput: Consumer email & phone = '".$data['consumer']['email']." , ".$data['consumer']['phone']."' \nOutput: Duplicate Consume (present in lead history table).\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+   public function test_for_consumer_duplicationchecking_dncl() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ssdas@ss.com","phone"=>"0123415343","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"NZ"));
+        $vali = new LeadProcessTable();
+        $result = $vali->duplicationChecking($data['consumer']['email'],$data['consumer']['phone'],$data['consumer']['countryCode']);
+        if($result=='0'){
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: Duplicate checking phone present in this array \nInput: Consumer phone = '".$data['consumer']['phone']."' \nOutput: Duplicate Consume (present in do not call table).\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_duplicationchecking_ces() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"krishnaerb@gmail.com","phone"=>"08002557977","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->duplicationChecking($data['consumer']['email'],$data['consumer']['phone'],$data['consumer']['countryCode']);
+        if($result=='0'){
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: Duplicate checking email present in this array \nInput: Consumer email = '".$data['consumer']['email']."' \nOutput: Duplicate Consume (present in client email suppression table).\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_duplicationchecking_cps() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ssdasp@ss.com","phone"=>"0123415344","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->duplicationChecking($data['consumer']['email'],$data['consumer']['phone'],$data['consumer']['countryCode']);
+        if($result=='0'){
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: Duplicate checking phone present in this array \nInput: Consumer phone = '".$data['consumer']['phone']."' \nOutput: Duplicate Consume (present in client phone suppression table).\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+
+
+    public function test_for_consumer_duplicationchecking_dbl() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"ssdasp@ss.com","phone"=>"08002557976","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->emailAddressPreProcessing($data['consumer']['email']);
+        if($result=='0'){
+            $errors = 'Invalid Email Address';
+            $valid = 0;
+        } else if($result=='2'){
+            $errors = 'Required email id';
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: invalid consumer email present in this array \nInput: Consumer email = '".$data['consumer']['email']."' \nOutput: error = ".$errors." (present in domain blacklist table).\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_duplicationchecking_ebl() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"sss@ss.com","phone"=>"08002557976","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->emailAddressPreProcessing($data['consumer']['email']);
+        if($result=='0'){
+            $errors = 'Invalid Email Address';
+            $valid = 0;
+        } else if($result=='2'){
+            $errors = 'Required email id';
+            $valid = 0;
+        } else {
+            $valid = 1;
+        }
+        if($valid==0){
+            $massage = "*********************************************************************\nDescription: invalid consumer email present in this array \nInput: Consumer email = '".$data['consumer']['email']."' \nOutput: error = ".$errors." (present in email blacklist table).\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$valid);
+    }
+
+    public function test_for_consumer_duplicationchecking_valid() {
+        $data = array("Supplier"=>array("ID"=>"a6b7ac9aeb165b1b4345b5ce88a04492","source"=>"Wintastic"),"campaign"=>array("ID"=>"2f9065307e8b94e2cd7c1b602de0ccb2"),"consumer"=>array("email"=>"susantakumardas@pp.com","phone"=>"08002557977","title"=>"MR","firstName"=>"Fred","lastName"=>"Farkus","birthdate"=>"14-02-1988","age"=>"15","ageRange"=>"25-35","gender"=>"Male","address1"=>"balaji guest house","address2"=>"100 Avenue madhapur","city"=>"100Ft Road","state"=>"kolkata","postcode"=>"721144","countryCode"=>"AU"));
+        $vali = new LeadProcessTable();
+        $result = $vali->duplicationChecking($data['consumer']['email'],$data['consumer']['phone'],$data['consumer']['countryCode']);
+        if($result=='0'){
+            $valid = 0;
+        } else {
+            $valid = 1;
+        } 
+        if($valid==1){
+            $massage = "*********************************************************************\nDescription: invalid consumer email present in this array \nInput: Consumer email = '".$data['consumer']['email']." , ".$data['consumer']['phone']."' \nOutput: No duplicate Consumer..\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(1,$valid);
+        echo '  ';
+    }
+}

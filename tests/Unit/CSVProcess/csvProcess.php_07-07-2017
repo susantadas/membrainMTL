@@ -1,0 +1,179 @@
+<?php
+
+namespace Tests\Unit\CSVProcess;
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use File;
+use App\ProcessCSV;
+
+class csvProcess extends TestCase
+{
+    public function test_for_filepath_doesnt_exist()
+    {
+    	$current_sup_pub_id = '1e0cb7b9cf2df00fee1ad59d08a97855';
+        $sup_id_added_path = 'supplier_files/'.$current_sup_pub_id.'/upload';
+        //$sup_id_added_path = 'supplier_files\\'.$current_sup_pub_id.'\\upload';
+        $path = base_path($sup_id_added_path);
+        $csv_process = new ProcessCSV;
+        $dir_exists = $csv_process->check_if_is_dir_exists($path);
+        if($dir_exists=='1'){
+            $massage = "*********************************************************************\nDescription: checking if a directory exists or not\nInput: FolderPath = 'supplier_files/1e0cb7b9cf2df00fee1ad59d08a97855/upload' \nOutput: invalid Path.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$dir_exists);
+    }
+    public function test_for_directoy_is_empty(){
+    	$current_sup_pub_id = '32dfb6045d9b0e6b3e026822db8868af';
+        $sup_id_added_path = 'supplier_files/'.$current_sup_pub_id.'/upload';
+        //$sup_id_added_path = 'supplier_files\\'.$current_sup_pub_id.'\\upload';
+        $path = base_path($sup_id_added_path);
+        $csv_process = new ProcessCSV;
+        $empty = $csv_process->check_if_dir_is_empty($path);
+        echo '\nResult is: '.$empty."\n";
+        if($empty=='1'){
+            $massage = "*********************************************************************\nDescription: checking if a directory empty or not\nInput: FolderPath = 'supplier_files/32dfb6045d9b0e6b3e026822db8868af/upload' \nOutput: Directory is empty.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(1,$empty);
+    }
+    public function test_for_filename_doesnt_match_with_campaign_publicid(){
+    	$current_sup_pub_id = '38bbef9bdfe8c9d49eac63998ff9b9e0';
+    	$sup_id_added_path = 'supplier_files/'.$current_sup_pub_id.'/upload';
+        //$sup_id_added_path = 'supplier_files\\'.$current_sup_pub_id.'\\upload';
+        $path = base_path($sup_id_added_path);
+    	$current_camp_pub_id = 'c3490353f7c65e5fbe9aac05a54ebc58';
+    	$csv_process = new ProcessCSV;
+        $latest_filename = $csv_process->get_latest_file($path);
+    	$file_ext_removed = preg_replace('/\\.[^.\\s]{3,4}$/', '', $latest_filename);
+        $arr = explode("_", $file_ext_removed, 2);
+        $filename_only_campaign_id = $arr[0];
+        $csv_process = new ProcessCSV;
+        $filename_matches = $csv_process->check_if_filename_matches($filename_only_campaign_id, $current_camp_pub_id);
+        if($filename_matches=='0'){
+            $massage = "*********************************************************************\nDescription: checking if filename doesn't matches with campaign public_id\nInput: FolderPath = 'supplier_files/38bbef9bdfe8c9d49eac63998ff9b9e0/upload/c3490353f7c65e5fbe9aac05a54ebc58' \nOutput: The filename doesn't match with campaign publid_id.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$filename_matches);
+    }
+    public function test_for_filename_matches_with_campaign_publicid(){
+    	$current_sup_pub_id = '44ab7d4d82bc5e923125bb19bd7d5b5b';
+        $current_camp_pub_id = 'c3490353f7c65e5fbe9aac05a54ebc58';
+    	$sup_id_added_path = 'supplier_files/'.$current_sup_pub_id.'/upload';
+        //$sup_id_added_path = 'supplier_files\\'.$current_sup_pub_id.'\\upload';
+        $path = base_path($sup_id_added_path);
+        $csv_process = new ProcessCSV;
+    	$latest_filename = $csv_process->get_latest_file($path);
+    	$file_ext_removed = preg_replace('/\\.[^.\\s]{3,4}$/', '', $latest_filename);
+        $arr = explode("_", $file_ext_removed, 2);
+        $filename_only_campaign_id = $arr[0];
+        $filename_matches = $csv_process->check_if_filename_matches($filename_only_campaign_id, $current_camp_pub_id);
+        if($filename_matches=='1'){
+            $massage = "*********************************************************************\nDescription: checking if filename matches with campaign public_id\nInput: FolderPath = 'supplier_files/1e0cb7b9cf2df00fee1ad59d08a97855/upload' \nOutput: The filename matches with campaign publid_id.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(1,$filename_matches);
+    }
+    public function test_for_file_is_tab_delimited(){
+    	$current_sup_pub_id = 'cff9f87017698c43e9d9eb8c05ad3d14';
+    	$sup_id_added_path = 'supplier_files/'.$current_sup_pub_id.'/upload';
+        //$sup_id_added_path = 'supplier_files\\'.$current_sup_pub_id.'\\upload';
+        $path = base_path($sup_id_added_path);
+        $csv_process = new ProcessCSV;
+    	$filename_to_read = $csv_process->get_latest_file($path);
+        //$filename_to_read = 'c3490353f7c65e5fbe9aac05a54ebc58_220617.txt';
+    	//$full_path = $path.'/'.$filename_to_read;
+    	//$full_path = $path.'\\'.$filename_to_read;
+    	$tab_delimited = $csv_process->check_if_file_is_tab_delimited($path, $filename_to_read, $checkLines=5);
+        if($tab_delimited=='1'){
+            $massage = "*********************************************************************\nDescription: checking if file is tab delimited\nInput: FolderPath = 'supplier_files/cff9f87017698c43e9d9eb8c05ad3d14/upload/c3490353f7c65e5fbe9aac05a54ebc58_220617.txt' \nOutput: The file is tab delimited.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(1,$tab_delimited);
+    }
+    public function test_for_file_is_not_tab_delimited(){
+    	$current_sup_pub_id = 'd3df314a6ce6f45d7d937e72a30bf55f';
+    	$sup_id_added_path = 'supplier_files/'.$current_sup_pub_id.'/upload';
+        //$sup_id_added_path = 'supplier_files\\'.$current_sup_pub_id.'\\upload';
+        $path = base_path($sup_id_added_path);
+        $csv_process = new ProcessCSV;
+        $filename_to_read = $csv_process->get_latest_file($path);
+    	//$filename_to_read = 'c3490353f7c65e5fbe9aac05a54ebc58_220617.txt';
+    	$tab_delimited = $csv_process->check_if_file_is_tab_delimited($path, $filename_to_read, $checkLines=5);
+        if($tab_delimited=='0'){
+            $massage = "*********************************************************************\nDescription: checking if file is tab delimited\nInput: FolderPath = 'supplier_files/d3df314a6ce6f45d7d937e72a30bf55f/upload/c3490353f7c65e5fbe9aac05a54ebc58_220617.txt' \nOutput: The file is is not tab delimited.\nResult: PASS\n*********************************************************************\n\n";
+            print_r($massage);
+        }
+        $this->assertEquals(0,$tab_delimited);
+    }
+    /*public function test_for_file_is_empty(){
+        $current_sup_pub_id = '32dfb6045d9b0e6b3e026822db8868af';
+        $sup_id_added_path = 'supplier_files/'.$current_sup_pub_id.'/upload';
+        //$sup_id_added_path = 'supplier_files\\'.$current_sup_pub_id.'\\upload';
+        $path = base_path($sup_id_added_path);
+        $current_camp_pub_id = 'c3490353f7c65e5fbe9aac05a54ebc58';
+        $filename_to_read = 'c3490353f7c65e5fbe9aac05a54ebc58_220617.txt';
+        $full_path = $path.'\\'.$filename_to_read;
+        if(filesize($full_path)) {    
+            // your file is not empty 
+            $is_empty='0';
+        }else{ $is_empty='1'; }
+        $this->assertEquals(0,$is_empty,sprintf(
+            "*********************************************************************\nInput: FolderPath = 'supplier_files/32dfb6045d9b0e6b3e026822db8868af/upload/c3490353f7c65e5fbe9aac05a54ebc58_220617.txt' \nOutput: The file is empty.\nResult: Passed\n*********************************************************************"
+        ));
+    }*/
+    public function dir_is_empty($path)
+	{
+	    $empty = true;
+	    $dir = opendir($path); 
+	    while($file = readdir($dir)) 
+	    {
+	        if($file != '.' && $file != '..')
+	        {
+	            $empty = false;
+	            break;
+	        }
+	    }
+	    closedir($dir);
+	    return $empty;
+	}
+	public function getFileDelimiter($newpath, $file, $checkLines = 2){
+        $filepath = $newpath.'/'.$file;
+        //$file = new SplFileObject($file);
+        //$file = Excel::load($filepath, function($reader) {})->get();
+        //$file = fopen($filepath, 'r');
+        $file = new \SplFileObject($filepath);
+        $delimiters = array(
+          '\t',
+          ';',
+          '|',
+          ':'
+        );
+        $results = array();
+        $i = 0;
+         while($file->valid() && $i <= $checkLines){
+            $line = $file->fgets();
+            foreach ($delimiters as $delimiter){
+                $regExp = '/['.$delimiter.']/';
+                $fields = preg_split($regExp, $line);
+                if(count($fields) > 1){
+                    if(!empty($results[$delimiter])){
+                        $results[$delimiter]++;
+                    } else {
+                        $results[$delimiter] = 1;
+                    }   
+                }
+            }
+           $i++;
+        }
+        if(!empty($results)){
+            $results = array_keys($results, max($results));
+            //print_r($results);
+            return $results[0];
+        }else{
+            return 0;
+        }
+        
+    }//function getFileDelimiter();
+}

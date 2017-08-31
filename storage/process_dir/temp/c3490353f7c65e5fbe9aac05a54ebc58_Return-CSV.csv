@@ -1,0 +1,6 @@
+"email","phone","title","firstName","lastName","birthdate","age","ageRange","gender","address1","address2","city","state","postcode","countryCode","supplier_id","client_id","campaign_id","lead_status"
+"isusantakumardas@gmail.com","0412080681","Mr","susanta","Farkus","14/02/1988","29","9-37","Male","KP","Hyd","Hyd","Telangana","500010","AU","33","1","56","Accepted"
+"krishnaerb@gmail.com","0297361045","Mr","Krishna","Kumar","14/02/1988","29","9-37","Male","TG","Hyd","Hyd","Telangana","506100","AU","33","1","56","Accepted"
+"mr.susantakumardas.home@gmail.com","0420268365","Mr","Test","Farkus","14/02/1988","29","9-37","Male","KP","Hyd","Hyd","Telangana","500010","AU","33","1","56","Accepted"
+"mr.anupamroy@gmail.com","394164003","Mr","Test","Farkus","14/02/1988","29","9-37","Male","KP","Hyd","Hyd","Telangana","500010","AU","33","1","56","Invalid"
+"joydeep.rakshit01@gmail.com","755566600","Mr","Test","Farkus","14/02/1988","29","9-37","Male","KP","Hyd","Hyd","Telangana","500010","AU","33","1","56","Invalid"

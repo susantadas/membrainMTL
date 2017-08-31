@@ -1,0 +1,12 @@
+kkkk121@mail.com	8686869646	Mr	Test	Farkus	10/11/2010	40	Oct-65	Male	KP	Hyd	Hyd	Telangana	500010	UK		
+kkkkk121@mail.com	09999999999	Mr	Test2	Kumar	10/12/2010	30	Oct-70	Female	TG	Hyd	Hyd	Telangana	506100	US
+sss123@gmail.com        09857632876     Mr      Test1   Ashok   28/07/2009      20	sep-55  Male	HN	Tkg
+abcd11@gmail.com	09898374663	Mr	Test0 	Krishi	04/09/2010	50	Aug-35	Male	MP	Utp
+defg354@gmail.com	09345628947	Mr	Test3  	Joe	15/03/2008	45	Jul-40	Male	SG	Kal
+ghij567@gmail.com	09745673914	Mr	Test4	Shri	30/08/2010	25	Jun-60	Male	Tj	Tln
+ijk756@gmail.com	09840149441	Mrs	Test5	Riya	29/06/2009	35	Nov-45	Female	Bg	Kar
+lmn789@gmail.com	09756438628	Mr	Test6	Nair	31/01/2010	47	Jan-30	Male	Mb	Mht
+opq2652@gmail.com	09210988092	Mr	Test7	Kanna	09/02/2008	53	May-50	Male	Cn	Krl
+rstu598@gmail.com	09444837642     Mrs	Test8	Shiny	03/07/2009	39	Dec-75	Female	Ag	Ksm
+vwx857@gmail.com	09791176593	Mr	Test9	Leo	08/10/2010	29	Feb-65	Male	Ng	Wtb
+yz4723@gmail.com	09840110489	Mr	Test01	Mark	26/09/2007	50	Mar-55	Male	Pn	Ukd

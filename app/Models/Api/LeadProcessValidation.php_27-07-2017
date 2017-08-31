@@ -1,0 +1,54 @@
+<?php
+namespace App\Models\Api;
+use Illuminate\Database\Eloquent\Model;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Response;
+use DB;
+class LeadProcessValidation extends Model
+{
+    protected $connection = 'mysql';
+    protected $primaryKey = 'id';
+    protected $table = 'lead_audit'; 
+    public function validateSupplier($data){
+        if(isset($data['Supplier']) && isset($data['Supplier']['ID'])){
+            $valid=1;
+        } else {
+            $valid=0;
+        }
+        return $valid;
+    }
+
+    public function validateCampaignr($data){
+        if(isset($data['campaign']) && isset($data['campaign']['ID'])){
+            $valid=1;
+        } else {
+            $valid=0;
+        }
+        return $valid;
+    }
+
+    public function validateConsumer($data){        
+        if(isset($data['consumer'])){
+            if(!empty($data['consumer'])){
+                $valid=1;
+            } else {
+              $valid=0; 
+            }
+        } else {
+            $valid=0;
+        }
+        return $valid;
+    }
+
+
+    public $timestamps = false;
+    protected $fillable = array(
+        'id',
+        'email_address',
+        'phone',
+        'first_name',
+        'last_name',
+        'postcode',
+        'received',
+    );
+}

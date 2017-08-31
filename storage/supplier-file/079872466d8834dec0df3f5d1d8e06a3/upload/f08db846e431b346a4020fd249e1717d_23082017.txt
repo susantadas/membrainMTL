@@ -1,0 +1,68 @@
+Sal	First	Last	company	position	Address1	Address2	Suburb	State	Postcode	country	address1m	address2m	suburbm	statem	postcodem	countrym	Phone1	phone2	fax	mobile	web	Email	email2	dpid	u1	u2 datetime	u3	u4	u5	u6	u7	u8	u9	u10	u11	u12	u13	u14	u15	u16	u17	u18	u19	u20
+	Tenaka	Osborne			10/92 Crowes Rd		Rural	Waimate	7980	New Zealand										272314457		tenaka2@hotmail.com																						Cohort Grid
+Ms	Rose	Jua			1/25 Main St		Fairlie	Fairlie	7925	New Zealand										226087135		ulannz@hotmail.com																						Cohort Grid
+	Tehu	Rima					Manurewa East	Auckland	2102	New Zealand										212770485		tehurima@gmail.com																						Cohort Grid
+	Daisy	Leau			Flat 4  19 Kambalda Street  Mangere Bridge		Auckland Airport	Auckland	2022	New Zealand										210838801		jasonschwenke@hotmail.com																						Cohort Grid
+	Pauline	Paraku			16 Edwards Pl		Paeroa	Paeroa	3600	New Zealand										204110255		paulineparaku57@gmail.com																						Cohort Grid
+	Tara	Pearson			53 hard street		Palmerston North	Palmerston North	4414	New Zealand										220641653		tarah8746@gmail.com																						Cohort Grid
+	Justin	Hansen			14A Waimana Rd		Papakura	Papakura	2112	New Zealand										212960259		oogish@gmail.com																						Cohort Grid
+	Clifton	Houpapa			12 Leese Street		Taumarunui	Taumarunui	3920	New Zealand										204078789		cliftonhoupapa@gmail.com																						Cohort Grid
+Mr	Tino	Felise			4 Samara Place	4 Samara Place	Clendon Park	Auckland	2103	New Zealand										2108175433		tinofelise17@gmail.com																						Cohort Grid
+	Judith	Penney			10 Kinrara Place		Halswell	Christchurch	8025	New Zealand										21317392		penneyjudith@gmail.com																						Cohort Grid
+	Dubs	Te Kahu			1980 Maraekakaho Road  RD 1		Rural	Hastings	4171	New Zealand										210691415		deborahtekahu@gmail.com																						Cohort Grid
+	Fiza	Nisha					Rural	Christchurch	7675	New Zealand										211656290		fknisha@yahoo.co.nz																						Cohort Grid
+	Vijay	Palagulla			230 High St		South Dunedin	Dunedin	9016	New Zealand										210336652		vijay.palagulla@gmail.com																						Cohort Grid
+	Kololia	Folau			13 Segar Ave		Mount Albert	Auckland	1025	New Zealand										211611073		liafolau@hotmail.com																						Cohort Grid
+	Ryo	Aoki					The Wood	Nelson	7010	New Zealand										210241589		awokix@gmail.com																						Cohort Grid
+	William	Duncan					Burnside	Christchurch	8042	New Zealand										212941442		wmajduncan@hotmail.com																						Cohort Grid
+	Cassie	Thomas			147 Stout St		Inner Kaiti	Gisborne	4010	New Zealand										210261832		cassthomas35@gmail.com																						Cohort Grid
+	Ian	Belworthy			45 Wavell Cres		Solway	Masterton	5810	New Zealand										210242828		shane.belworthy@gmail.com																						Cohort Grid
+	Katy	Marshall					Woolston	Christchurch	8023	New Zealand										2102264167		katymarshall1979@gmail.com																						Cohort Grid
+	Len	Bristowe			65 Sheehan Ave		Papakura	Papakura	2110	New Zealand										211934609		len.bristowe@totalaccess.co.nz																						Cohort Grid
+	Andrew	Brown			3/245 Adelaide Rd		Roseneath	Wellington	6021	New Zealand										204088531		goodcopper@hotmail.com																						Cohort Grid
+	Mere	Ewe			5 New St		Hillcrest	Hamilton	3216	New Zealand										210291978		toheewe33@gmail.com																						Cohort Grid
+	Davide	Tuiketei			1/74 Bartlett Rd		Rural	Richmond	7081	New Zealand										210438095		tuiketeitevita@gmail.com																						Cohort Grid
+	Thelma	Poti			22 Driver Cres		Ranui Heights	Porirua	5024	New Zealand										278358513		didiapoti@hotmail.com																						Cohort Grid
+	Marlene	Devlin			2/280 Waiuku-Otaua Rd		Rural	Waiuku	2682	New Zealand										272810057		devlinmarlene@kinect.co.nz																						Cohort Grid
+	Lynare	Lowe			156 Cutwater Road  RD 9		Rural	Te Puke	3189	New Zealand										285855225		lynarelowe@yahoo.co.nz																						Cohort Grid
+Ms	Bharathi	Sadipiralla			.	27 Pooles Rd	Te Aroha	Te Aroha	3320	New Zealand										272325969		bharathi.sadipiralla@fonterra.com																						Cohort Grid
+	Johann	Sookahet			11 Jeannie Way		Otaihanga	Paraparaumu	5036	New Zealand										211472565		johannsookahet@hotmail.com																						Cohort Grid
+	Maree	Atkinson					Edgecumbe	Edgecumbe	3120	New Zealand										275732769		mareeatkinson68@gmail.com																						Cohort Grid
+Ms	Gauri	Kushte			.		Tauhara	Taupo	3330	New Zealand										224253969		gauri.kushte@gmail.com																						Cohort Grid
+	Tevita	Fakava			1/196 Heights Rd		Rural	Pukekohe	2676	New Zealand										212391124		tevitafakava@live.com																						Cohort Grid
+Mr	Terry	Dunleavy			.	14A Bayview Road	Hauraki	Auckland	622	New Zealand							94863859	274836688				terry@winezeal.co.nz																						Cohort Grid
+	Dirk	De Jong					Beachlands	Auckland	2018	New Zealand										21506103		eldir@xtra.co.nz																						Cohort Grid
+	Lorraine	Turner			36 Garvins Rd		Burnside	Christchurch	8042	New Zealand										2040821590		larrymekit1@gmail.com																						Cohort Grid
+	Taniela	Inisi					Whitiora	Hamilton	3200	New Zealand										279335033		nela4943@gmail.com																						Cohort Grid
+	Floyd	Ihe					Longlands	Hastings	4120	New Zealand										2108244105		ihefloyd@gmail.com																						Cohort Grid
+	Nicola	Tubman					Dinsdale	Hamilton	3204	New Zealand										273648877		makeuplady3204@gmail.com																						Cohort Grid
+Ms	Mateputuputu	Manukau					Ahuriri	Napier	4110	New Zealand										210455738		vikki_mlh5@hotmail.com																						Cohort Grid
+Mr	Sesili	Hafoka			.	17 Prado Drive	Pukekohe	Pukekohe	2120	New Zealand										274165046		shafoka@gmail.com																						Cohort Grid
+	Kaleb	Healy			39 Lewis St		Fitzroy	Hamilton	3206	New Zealand										212277786		kb692u@gmail.com																						Cohort Grid
+	Shane	Haami					Durie Hill	Wanganui	4500	New Zealand										2041081191		haamishane28@gmail.com																						Cohort Grid
+	Tania	Gleeson			42 Fleet Street  Solway		Solway	Masterton	5810	New Zealand										279426855		holdens_are_us@msn.com																						Cohort Grid
+	Janie	Hunt			26 Waimate Crescent		Tokoroa	Tokoroa	3420	New Zealand										212353697		chas_faia@hotmail.com																						Cohort Grid
+	Anne	Fallon			1/389 Municipal Rd		Rural	Hokitika	7881	New Zealand										272207609		annefallon00@hotmail.com																						Cohort Grid
+	Eileen	Rimanui					Waiuku	Waiuku	2123	New Zealand										204116200		ektuwharimanui@gmail.com																						Cohort Grid
+	Maree	Macdonnell					Enderley	Hamilton	3214	New Zealand										2102667171		scatterbrainmaree@gmail.com																						Cohort Grid
+	Mark	Boyce			519a Otumoetai Road		Bethlehem	Tauranga	3110	New Zealand										220279001		markboyce2@gmail.com																						Cohort Grid
+	Dene	Hopkins					Otaki Beach	Otaki	5512	New Zealand										275305566		dhopkins1960@hotmail.co.nz																						Cohort Grid
+	Sabrina	Coppen					Welbourn	New Plymouth	4310	New Zealand										274469274		bing751bing@gmail.com																						Cohort Grid
+	Pauleen	Sifatama			32 Cranmere Crescent  Mangere East		Otahuhu	Auckland	2024	New Zealand										210706518		pauleensm@hotmail.co.nz																						Cohort Grid
+	Allan	Wight			23 Doncaster Terrace		Aotea	Porirua	5024	New Zealand										274552128		aw63552@gmail.com																						Cohort Grid
+	Dixie	Welford			4/159 Wellesley Rd		Maraenui	Napier	4110	New Zealand										211768075		dixie.welford@hotmail.com																						Cohort Grid
+Miss	Bella	Gibney			.	8 Stark Street	Durie Hill	Wanganui	4500	New Zealand										221882855		bellagibney2352@gmail.com																						Cohort Grid
+	Wendy	Kingsbury					Rural	Whakatane	3192	New Zealand										274759861		wendy.kingsbury@xtra.co.nz																						Cohort Grid
+	Junior	Tongia					Mangere	Auckland	2022	New Zealand										2108769426		jstongia@hotmail.co.nz																						Cohort Grid
+	Tania	Whyte					Pukekohe	Pukekohe	2120	New Zealand										2102315013		terrahmaeva20512@gmail.com																						Cohort Grid
+	John	Mahia			54 Keri Vista Rise		Papakura	Papakura	2110	New Zealand										275646624		johnmahia@xtra.co.nz																						Cohort Grid
+	Wayne	Isherwood			20 Page St		Morrinsville	Morrinsville	3300	New Zealand										210822694		wisherwood16@gmail.com																						Cohort Grid
+	Trinity	Daken			26 smith street		Burnside	Christchurch	8042	New Zealand										2040809745		leslienoel02@gmail.com																						Cohort Grid
+	Navina	Wyrill			24 Camellia Dr		Owhata	Rotorua	3010	New Zealand										202735758		beanie455@gmail.com																						Cohort Grid
+	Laraine	Ellis			10A Bird Street		Hope	Richmond	7020	New Zealand										241020115		bestlaraine@gmail.com																						Cohort Grid
+	Trish	Fraser					Bethlehem	Tauranga	3110	New Zealand										210569683		trish.fraser@xtra.co.nz																						Cohort Grid
+	Tracie	Farrow					Welcome Bay	Tauranga	3112	New Zealand										279415473		lilt669@gmail.com																						Cohort Grid
+	Mahmoud	Hosny			4 Ely Place		Waitarere Beach	Levin	5510	New Zealand										201110954		mahmoudhosny12@gmail.com																						Cohort Grid
+	Herena	Watson			33 Takapuwahia drive		Takapuwahia	Porirua	5022	New Zealand										212105540		herenascraig71@gmail.com																						Cohort Grid
+	Sue	Kingi			49 saxbys rd hamilton		Fitzroy	Hamilton	3206	New Zealand										212156777		dtr201210@gmail.com																						Cohort Grid
+	Sarah	Siliva			9B Ventura Street  Mangere		Auckland Airport	Auckland	2022	New Zealand										210525902		rosiesiliva89@gmail.com																						Cohort Grid
