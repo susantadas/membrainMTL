@@ -28,21 +28,25 @@
                                 <input type="text" class="form-control1 ng-invalid ng-invalid-required ng-touched" id="name" name="name" value="{{$suppliers->name}}" />
                             </div>
                             <div class="col-sm-6">
-                                <label class="control-label">Contact Email</label>
-                                <input type="email" class="form-control1 ng-invalid ng-valid-email ng-invalid-required ng-touched" id="contact_email" name="contact_email" value="{{$suppliers->contact_email}}" />
+                                <label class="control-label">Public Id</label>
+                                <input type="public_id" class="form-control1 ng-invalid ng-invalid-required ng-touched" id="public_id" name="public_id" value="{{$suppliers->public_id}}" @if($suppliers->public_id!='') readonly="readonly" @endif />
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-6">
+                                <label class="control-label">Contact Email</label>
+                                <input type="email" class="form-control1 ng-invalid ng-valid-email ng-invalid-required ng-touched" id="contact_email" name="contact_email" value="{{$suppliers->contact_email}}" />
+                            </div>
+                            <div class="col-sm-6">
                                 <label class="control-label">Contact Name</label>
                                 <input type="text" class="form-control1 ng-invalid ng-invalid-required ng-touched" id="contact_name" name="contact_name" value="{{$suppliers->contact_name}}" />
                             </div>
+                        </div>
+                        <div class="form-group filled">
                             <div class="col-sm-6">
                                 <label class="control-label">Contact Phone</label>
                                 <input type="text" class="form-control1 ng-invalid ng-invalid-required ng-touched" id="contact_phone" name="contact_phone" value="{{$suppliers->contact_phone}}" />
                             </div>
-                        </div>
-                        <div class="form-group filled">
                             <div class="col-sm-6">
                                 <label class="control-label">Error Allowance</label>
                                 <select class="form-control1 ng-invalid ng-invalid-required" name="error_allowance" id="error_allowance">
@@ -51,18 +55,17 @@
                                         <option value="{{$i}}" @if($suppliers->error_allowance==$i) selected @endif>{{$i}}</option>
                                     @endfor
                                 </select>
-                            </div>
+                            </div>                            
+                        </div>
+                        <div class="form-group">
                             <div class="col-sm-6">
-                                <label class="control-label">&nbsp;</label>
                                 <div class="checkboxb checkbox-primary">
                                     <input id="return_csv" name="return_csv" type="checkbox" value="{{$suppliers->return_csv}}" {{$suppliers->return_csv==1 ?' checked=checked':''}}>
                                     <label for="return_csv">
                                         CSV Return
                                     </label>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="form-group">                       
+                            </div>                      
                             <div class="col-sm-6">
                                 <div class="checkboxb checkbox-primary">
                                     <input id="active" name="active"   type="checkbox" value="{{$suppliers->active}}" {{$suppliers->active==1 ?' checked=checked':''}}>
@@ -97,6 +100,9 @@
                                     required: true,
                                     regex:/^[a-zA-Z ]*$/,
                                 },
+                                public_id: {
+                                    required: true,  
+                                },
                                 contact_email: {
                                     required: true,
                                     email: true,
@@ -118,6 +124,9 @@
                                 name: {
                                     required: "Please enter name",
                                     regex: "Special character and Number not allowed"
+                                },
+                                public_id: {
+                                    required: "Please enter public id"
                                 },
                                 contact_email: {
                                     required:"Please enter a email address.",

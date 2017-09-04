@@ -17,25 +17,25 @@ class DownloadCSVfromsftp extends Command
 
     public function handle() {
         /*$details = array(
-            'host'     => '',
+            'host'     => '67.23.226.139',
             'port'     => 22,
-            'username' => '',
-            'password' => '',
+            'username' => 'midclass',
+            'password' => 'RX(dmjKvSB(UJedVXKBJ', // uou can set password or key path 
             'root' => '/public_html/supplier-file/',
             'timeout' => 10,
             'directoryPerm' => 0755,
             'type'=>'ftp'
         );*/
 
-        $newkey = 'ppk/sacnbdsh.ppk';
+        $newkey = 'ppk/anupam_aws.ppk';
         $newkeyPath = storage_path($newkey);
         $details = array(
-            'host'     => '',
+            'host'     => '52.77.182.246',
             'port'     => 22,
-            'username' => '',
+            'username' => 'ec2-user',
             'password' => '',
             'privateKey' => "$newkeyPath",
-            'root' => '/var/www/html/project/supplier-file/',
+            'root' => '/var/www/html/membraindev/supplier-file/',
             'timeout' => 10,
             'directoryPerm' => 0755,
             'type'=>'sftp'
@@ -83,7 +83,7 @@ class DownloadCSVfromsftp extends Command
         } else {
             $Response ='';
             $sftp = new SFTP($details['host']);
-            if($details['privateKey']!=''){
+            if($details['privateKey']!='' && $details['password']==''){
                 $password = new RSA();
                 // If the private key has a passphrase we set that first
                 $password->setPassword('passphrase');
