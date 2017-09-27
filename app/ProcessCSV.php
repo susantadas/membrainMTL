@@ -1,11 +1,9 @@
 <?php
-
 namespace App;
-
 use Illuminate\Database\Eloquent\Model;
 use File;
+use Excel;
 use Illuminate\Support\Facades\Storage;
-
 class ProcessCSV extends Model
 {
     protected $connection = 'mysql';
@@ -64,42 +62,36 @@ class ProcessCSV extends Model
           return '0';
         }
     }
-    public function getFileDelimiter($newpath, $file, $checkLines = 2){
-        $filepath = $newpath.'/'.$file;
-        //$file = new SplFileObject($file);
-        //$file = Excel::load($filepath, function($reader) {})->get();
-        //$file = fopen($filepath, 'r');
+    function getFileDelimiter($path,$fileOrg, $checkLines = 2){
+        $filepath = $path.'/'.$fileOrg;
         $file = new \SplFileObject($filepath);
         $delimiters = array(
-          '\t',
-          ';',
-          '|',
-          ':'
+          '\t'
         );
         $results = array();
         $i = 0;
          while($file->valid() && $i <= $checkLines){
-            $line = $file->fgets();
-            foreach ($delimiters as $delimiter){
-                $regExp = '/['.$delimiter.']/';
-                $fields = preg_split($regExp, $line);
-                if(count($fields) > 1){
-                    if(!empty($results[$delimiter])){
-                        $results[$delimiter]++;
-                    } else {
-                        $results[$delimiter] = 1;
-                    }   
+            if($i=='1'){
+                $line = $file->fgets();
+                foreach ($delimiters as $delimiter){
+                    $regExp = '/['.$delimiter.']/';
+                    $fields = preg_split($regExp, $line);
+                    if(count($fields) > 1){
+                        if(!empty($results[$delimiter])){
+                            $results[$delimiter]++;
+                        } else {
+                            $results[$delimiter] = 1;
+                        }   
+                    }
                 }
             }
            $i++;
         }
         if(!empty($results)){
             $results = array_keys($results, max($results));
-            //print_r($results);
             return $results[0];
-        }else{
+        } else {            
             return 0;
         }
-        
     }// getFileDelimiter();
 }

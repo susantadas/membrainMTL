@@ -27,56 +27,66 @@ class DomainblacklistsController extends Controller
     /* Start new data store in database with parameters(all request data)*/
     public function store(Request $request) {
         set_time_limit(0);
-        $error = array();
-        $succe = array();
-        $dup = array();        
-        $vdom = array();
-        $notformeted = 0;
-        $empty = 1;
-        if($request->hasFile('myfile')){
-            $path = $request->file('myfile')->getRealPath();
-            $CountData = Excel::load($path, function($reader) {})->get();
-            $data = fopen($path,'r');
-            if(!empty($CountData) && $CountData->count() > 0){
-                $DomainblacklistTruncate = DB::table('domain_blacklist')->truncate();
-                while (($lineD = fgetcsv($data)) !== FALSE) {
-                    $value = array('domain'=>(isset($lineD[0]) ? $lineD[0] : ''),'comment'=>(isset($lineD[1]) ? $lineD[1] : ''));
-                    if(!empty($value['domain'])){
-                        if(!empty($value) && filter_var($value['domain'], FILTER_VALIDATE_URL)){
-                            $validation = Validator::make($value,array(
-                                'domain' => 'required|string|max:255|unique:domain_blacklist',
-                            ));
-                            
-                            if($validation->fails()) {
-                                $dup[]=0;
-                            } else {
-                                $domainblacklist = new Domainblacklist;
-                                $domainblacklist->domain = $value['domain'];
-                                $domainblacklist->comment = $value['comment'];
-                                if(!$domainblacklist->save()){
-                                    $error[]=0;
+        try{
+            $error = array();
+            $succe = array();
+            $dup = array();        
+            $vdom = array();
+            $notformeted = 0;
+            $empty = 1;
+            if($request->hasFile('myfile')){
+                $path = $request->file('myfile')->getRealPath();
+                $CountData =  Excel::selectSheetsByIndex(0)->load($path, function($reader){
+                    $results = $reader->noHeading();
+                })->get(); 
+                if(!empty($CountData) && $CountData->count() > 0){
+                    $DomainblacklistTruncate = DB::table('domain_blacklist')->truncate();
+                    foreach ($CountData as $key => $lineD) {
+                        $lineDTabdilimited = explode("\t",$lineD[0]);
+                        $domain = (isset($lineDTabdilimited[0]) ? $lineDTabdilimited[0] : (isset($lineD[0]) ? $lineD[0] : ''));
+                        $comment = (isset($lineDTabdilimited[1]) ? $lineDTabdilimited[1] : (isset($lineD[1]) ? $lineD[1] : ''));
+                        $value = array('domain'=>$domain,'comment'=>$comment);
+                        if(!empty($value['domain'])){
+                            $domainNameOrg = str_replace(array('https://', 'http://','ftp.','sftp.'), '', $value['domain']);
+                            if(!empty($value) && preg_match("/^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$/i", $domainNameOrg)){
+                                $validation = Validator::make($value,array(
+                                    'domain' => 'required|string|max:255|unique:domain_blacklist',
+                                ));                            
+                                
+                                if($validation->fails()) {
+                                    $dup[]=0;
                                 } else {
-                                    $succe[] = 1;
+                                    $domainblacklist = new Domainblacklist;
+                                    $domainblacklist->domain = $domainNameOrg;
+                                    $domainblacklist->comment = $value['comment'];
+                                    if(!$domainblacklist->save()){
+                                        $error[]=0;
+                                    } else {
+                                        $succe[] = 1;
+                                    }
                                 }
+                            } else {
+                                $vdom[]=0;
                             }
                         } else {
-                            $vdom[]=0;
+                            $notformeted = 1;
                         }
-                    } else {
-                        $notformeted = 1;
                     }
+                } else {
+                    $empty = 0;
                 }
-            } else {
-                $empty = 0;
             }
-            fclose($data);
+            if(count($succe)>1){
+                $status=1;
+            } else {
+                $status=0;
+            }
+            return array('status'=>$status,'error'=> (count($error) + count($dup) + count($vdom)),'success'=>count($succe),'empty'=>$empty,'total'=>$CountData->count(),'dup'=>count($dup),'vdom'=>count($vdom),'notformeted'=>$notformeted);
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return array('status'=>'2','error'=>$e->getMessage());
+            }
         }
-        if(count($succe)>1){
-            $status=1;
-        } else {
-            $status=0;
-        }
-        return array('status'=>$status,'error'=> (count($error) + count($dup) + count($vdom)),'success'=>count($succe),'empty'=>$empty,'total'=>$CountData->count(),'dup'=>count($dup),'vdom'=>count($vdom),'notformeted'=>$notformeted);
     }
     /* End new data store in database with parameters(all request data)*/
     /* Start show created page not needed */
@@ -101,12 +111,18 @@ class DomainblacklistsController extends Controller
     /* End show created page not needed */
     /* Start particular quarantines csv file */
     public function downloadExcelFile($type){
-        $domainblacklists = Domainblacklist::get(['domain','comment'])->toArray();
-        return Excel::create('domainblacklists', function($excel) use ($domainblacklists) {
-            $excel->sheet('domainblacklists', function($sheet) use ($domainblacklists) {
-                $sheet->fromArray($domainblacklists);
-            });
-        })->download($type);
+        try{
+            $domainblacklists = Domainblacklist::get(['domain','comment'])->toArray();
+            return Excel::create('domainblacklists', function($excel) use ($domainblacklists) {
+                $excel->sheet('domainblacklists', function($sheet) use ($domainblacklists) {
+                    $sheet->fromArray($domainblacklists);
+                });
+            })->download($type);
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return $e->getMessage();
+            }
+        }
     }
     /* End particular quarantines csv file */
 }

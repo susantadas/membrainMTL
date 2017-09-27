@@ -150,20 +150,33 @@
 						});
 						/* END: After user selects a campaign from dropdown appending that campaign id to a form hidden input field */
 						$("#process").on("click", function(){
-							//alert(1);
 							var camp_id = $('#campaignpublicid').val();
-							//alert(camp_id);
 							$.ajax({
 								type:'POST',
 								url:"{{ url('processleadcsv/csvProcessingFromPortal') }}",
 								data:{ _token:"{{ csrf_token() }}",'camp_id':camp_id },
 								dataType:'json',
 								success:function(response){
-									//alert(response);
+									var resData = response.responseData;
+									var responseArray = resData.split('<br />');
 									if(response.status == 1){
-										$('#errorStatus').html('<span style="color:green">'+response.responseData+'</span>').show();
+										var html = '<ul class="alert-success">';
+										$.each(responseArray, function(key,value) {
+											if(value!=''){
+												html +='<li class="success">'+value+'</li>';
+											}
+										});
+										html +='</ul>'
+										$('#massage').html(html).show();
 									}else{
-										$('#errorStatus').html('<span style="color:red">'+response.responseData+'</span>').show();
+										var html = '<ul class="error-success">';
+										$.each(responseArray, function(key,value) {
+											if(value!=''){
+												html +='<li class="errors">'+value+'</li>';
+											}
+										});
+										html +='</ul>'
+										$('#massage').html(html).show();
 									}
 								},
 								error: function(jqXHR, textStatus, errorThrown){

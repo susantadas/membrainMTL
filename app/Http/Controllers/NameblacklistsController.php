@@ -36,16 +36,20 @@ class NameblacklistsController extends Controller
         $empty = 1;
         if($request->hasFile('myfile')){
             $path = $request->file('myfile')->getRealPath();
-            $CountData = Excel::load($path, function($reader) {})->get();
-            $data = fopen($path,'r');
+            $CountData =  Excel::selectSheetsByIndex(0)->load($path, function($reader){
+                $results = $reader->noHeading();
+            })->get();
             if(!empty($CountData) && $CountData->count() > 0){
                 $NameblacklistTruncate = DB::table('name_blacklist')->truncate();;
-                while (($lineN = fgetcsv($data)) !== FALSE) {                    
-                    $value = array('name'=>(isset($lineN[0]) ? $lineN[0] : ''),'comment'=>(isset($lineN[1]) ? $lineN[1] : ''));
+                foreach ($CountData as $key => $lineN) {
+                    $lineNTabdilimited = explode("\t",$lineN[0]);
+                    $name = (isset($lineNTabdilimited[0]) ? $lineNTabdilimited[0] : (isset($lineN[0]) ? $lineN[0] : ''));
+                    $comment = (isset($lineNTabdilimited[1]) ? $lineNTabdilimited[1] : (isset($lineN[1]) ? $lineN[1] : ''));
+                    $value = array('name'=>$name,'comment'=>$comment);
                     if(isset($value['name'])){
                         if(!empty($value) && $value['name']!='' && preg_match("/^[a-zA-Z ]*$/", $value['name'])){
                             $validation = Validator::make($value,array(
-                                'name' => 'required|string|max:255|unique:name_blacklist',
+                                'name' => 'required|regex:/^[a-zA-Z ]*$/|max:255|unique:name_blacklist',
                             ));
 
                             if($validation->fails()) {
@@ -70,7 +74,6 @@ class NameblacklistsController extends Controller
             } else {
                 $empty = 0;
             }
-            fclose($data);
         }
         if(count($succe)>0){
             $status=1;

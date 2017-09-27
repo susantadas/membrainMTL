@@ -39,105 +39,171 @@ class AlertsController extends Controller
     }
     /*START: To delete a single (or) multiple alerts from database  */
     public function destroy(Request $request) {
-        if(is_array($request->id))  {
-            Alert::destroy($request->id);
-            return 1;
-        } else {
-            Alert::findOrFail($request->id)->delete();
-            return 1;
+        try{
+            if(is_array($request->id))  {
+                Alert::destroy($request->id);
+                return 1;
+            } else {
+                Alert::findOrFail($request->id)->delete();
+                return 1;
+            }
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return 0;
+            }
         }
     }
     /*END: To delete a single (or) multiple alerts from teh database */
     /*START: To Acknowledge an alert through detailed popup in the alerts page */
     public function acknowledgeAlert(Request $request) {
-        $uid = \Auth::user()->id;
-        $usersName = $email = DB::table('protal_user')->where('id', $uid)->value('name');
-        //$_date = date('Y-m-d h:i:s a');
-        $date = Carbon::createFromFormat('Y-m-d g:i A', date('Y-m-d h:i:s a'));
-        $id = $request->input('id');
-        $alert = Alert::find($id);
-        $alert->acknowledged = 0;
-        $alert->login_usernme = $usersName;
-        $alert->acknowledged_date = $date;
-        if(!$alert->save()){
-            return ['status'=>0];
-        } else {
-            $count = DB::table('alerts')->where('acknowledged', 1)->count();
-            
-            $request->session()->put('count_alert', $count);
-            return ['count'=>$count, 'status'=>1,'name'=>$usersName,'date'=>date('dS M Y h:i:s a', strtotime($date))];
+        try{
+            $uid = \Auth::user()->id;
+            $usersName = $email = DB::table('protal_user')->where('id', $uid)->value('name');
+            //$_date = date('Y-m-d h:i:s a');
+            $date = Carbon::createFromFormat('Y-m-d g:i A', date('Y-m-d h:i:s a'));
+            $id = $request->input('id');
+            $alert = Alert::find($id);
+            $alert->acknowledged = 0;
+            $alert->login_usernme = $usersName;
+            $alert->acknowledged_date = $date;
+            if(!$alert->save()){
+                return ['status'=>0];
+            } else {
+                $count = DB::table('alerts')->where('acknowledged', 1)->count();                
+                $request->session()->put('count_alert', $count);
+                return ['count'=>$count, 'status'=>1,'name'=>$usersName,'date'=>date('dS M Y h:i:s a', strtotime($date))];
+            }
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return ['status'=>0,'errot'=>$e->getMessage()];
+            }
         }
     }
     /*END: To Acknowledge an alert through detailed popup in the alerts page */
     /* START: This is to download a sample csv file but not using right now */
     public function getDownload($id) {
-        $alertsId = DB::table('alerts')
-            ->where('alerts.id','=',$id)
-            ->LeftJoin('suppliers', 'alerts.supplier_id', '=', 'suppliers.id')
-            ->select('alerts.*', 'suppliers.id as sid','suppliers.public_id','suppliers.name')
-            ->get();
-        $campain_id = explode('_',$alertsId[0]->filename);
-        $campainId = $campain_id[0];
-        $ext = end($campain_id);
-        if($alertsId[0]->sid==''){
-             $newfilename = $campainId.'_Return-CSV_out.csv';
-            $campaignsName = DB::table('campaigns')->where('public_id','=',$campainId)->value('name');
-            $pathToFile1 = storage_path('process_dir/portal_csv_upload/temp/'.$alertsId[0]->filename);
-            $pathToFile2 = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
-            if(file_exists($pathToFile1)){
-                $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$alertsId[0]->filename);
-            } else {
-                $pathToFile = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
-            }
-            $name = $campaignsName.'_'.$ext;
-        } else {            
-            if($ext=='Return-CSV.csv'){
-                $newfilename = $campainId.'_Return-CSV_out.csv';
-                $campaignsName = DB::table('campaigns')->where('public_id','=',$campainId)->value('name');
-                $pathToFile1 = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$alertsId[0]->filename);
-                $pathToFile2 = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
-                $pathToFile3 = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$newfilename);
-                $pathToFile4 = storage_path('supplier_files/portal_csv_upload/download/'.$alertsId[0]->filename);
-                $name = $alertsId[0]->name.'_'.$campaignsName.'_'.$ext;
-                if(file_exists($pathToFile1)){
-                    $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$alertsId[0]->filename);
-                } else if(file_exists($pathToFile2)){
-                    $pathToFile = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
-                } else if(file_exists($pathToFile3)){
-                    $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$newfilename);
-                } else if(file_exists($pathToFile4)){
-                    $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$newfilename);
-                } else {
+        try{
+            $alertsId = DB::table('alerts')
+                ->where('alerts.id','=',$id)
+                ->LeftJoin('suppliers', 'alerts.supplier_id', '=', 'suppliers.id')
+                ->select('alerts.*', 'suppliers.id as sid','suppliers.public_id','suppliers.name')
+                ->get();
+            $campain_id = explode('_',$alertsId[0]->filename);
+            $campainId = $campain_id[0];
+            $ext = end($campain_id);
+            if($alertsId[0]->sid==''){
+                if($ext=='invalid.csv'){
                     $pathToFile = storage_path('supplier_files/portal_csv_upload/download/'.$alertsId[0]->filename);
+                    $name = $alertsId[0]->filename;
+                } else if($ext=='Return-CSV.csv' || $ext=='Return-CSV_out.csv') {
+                    $newfilename = $campainId.'_Return-CSV_out.csv';
+                    $campaignsName = DB::table('campaigns')->where('public_id','=',$campainId)->value('name');
+                    $pathToFile1 = storage_path('process_dir/portal_csv_upload/temp/'.$alertsId[0]->filename);
+                    $pathToFile2 = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
+                    if(file_exists($pathToFile1)){
+                        $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$alertsId[0]->filename);
+                    } else {
+                        $pathToFile = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
+                    }
+                    $name = $campaignsName.'_'.$ext;
+                } else {
+                    $pathToFile = storage_path('frauddetections/'.$alertsId[0]->supplier_id.'/'.$alertsId[0]->filename);
+                    if(file_exists($pathToFile)){
+                        $filename = explode('.', $alertsId[0]->filename);
+                        $name = $filename[0].'_'.$alertsId[0]->name.'.'.$filename[1];
+                    } else{
+                        $filename = explode('.', $alertsId[0]->filename);
+                        $name = $filename[0].'_'.$alertsId[0]->name.'.'.$filename[1];
+                    }
                 }
             } else {
-                $pathToFile = storage_path('frauddetections/'.$alertsId[0]->sid.'/'.$alertsId[0]->filename);
-                $name = 'Fraud_Detections_'.$alertsId[0]->name.'.txt';
-            }
-        }   
-        $headers = ['Content-type'=>'text/csv'];
-        if (file_exists($pathToFile)) {
-            return response()->download($pathToFile, $name, $headers);
-        } else {
-            $newExt = explode('.',$ext);
-            $_ext = end($newExt);       
-            $pathToFilenew = storage_path('frauddetections/frauddetections_empty.'.$_ext);
-            if($alertsId[0]->sid==''){
-                $namenew = 'Fraud_Detections_empty.'.$_ext;
+                if($ext=='Return-CSV.csv'){
+                    $newfilename = $campainId.'_Return-CSV_out.csv';
+                    $campaignsName = DB::table('campaigns')->where('public_id','=',$campainId)->value('name');
+                    $pathToFile1 = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$alertsId[0]->filename);
+                    $pathToFile2 = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
+                    $pathToFile3 = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$newfilename);
+                    $pathToFile4 = storage_path('supplier_files/portal_csv_upload/download/'.$alertsId[0]->filename);
+                    $name = $alertsId[0]->name.'_'.$campaignsName.'_'.$ext;
+                    if(file_exists($pathToFile1)){
+                        $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$alertsId[0]->filename);
+                    } else if(file_exists($pathToFile2)){
+                        $pathToFile = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
+                    } else if(file_exists($pathToFile3)){
+                        $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$newfilename);
+                    } else if(file_exists($pathToFile4)){
+                        $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$newfilename);
+                    } else {
+                        $pathToFile = storage_path('supplier_files/portal_csv_upload/download/'.$alertsId[0]->filename);
+                    }
+                } else if($ext=='invalid.csv'){
+                    $pathToFile = storage_path('supplier_files/portal_csv_upload/download/'.$alertsId[0]->filename);
+                    $name = $alertsId[0]->filename;
+                } elseif($ext=='out.csv') {
+                    $newfilename = $campainId.'_Return-CSV_out.csv';
+                    $campaignsName = DB::table('campaigns')->where('public_id','=',$campainId)->value('name');
+                    $pathToFile1 = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$alertsId[0]->filename);
+                    $pathToFile2 = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
+                    $pathToFile3 = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$newfilename);
+                    $pathToFile4 = storage_path('supplier_files/portal_csv_upload/download/'.$alertsId[0]->filename);
+                    $name = $alertsId[0]->name.'_'.$campaignsName.'_'.$ext;
+                    if(file_exists($pathToFile1)){
+                        $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$alertsId[0]->filename);
+                    } else if(file_exists($pathToFile2)){
+                        $pathToFile = storage_path('supplier_files/portal_csv_upload/download/'.$newfilename);
+                    } else if(file_exists($pathToFile3)){
+                        $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$newfilename);
+                    } else if(file_exists($pathToFile4)){
+                        $pathToFile = storage_path('supplier_files/'.$alertsId[0]->public_id.'/download/'.$newfilename);
+                    } else {
+                        $pathToFile = storage_path('supplier_files/portal_csv_upload/download/'.$alertsId[0]->filename);
+                    }
+                } else {
+                    $pathToFile = storage_path('frauddetections/'.$alertsId[0]->supplier_id.'/'.$alertsId[0]->filename);
+                    if(file_exists($pathToFile)){
+                        $filename = explode('.', $alertsId[0]->filename);
+                        $name = $filename[0].'_'.$alertsId[0]->name.'.'.$filename[1];
+                    } else{
+                        $filename = explode('.', $alertsId[0]->filename);
+                        $name = $filename[0].'_'.$alertsId[0]->name.'.'.$filename[1];
+                    }
+                }
+            } 
+            $headers = ['Content-type'=>'text/csv'];
+            if (file_exists($pathToFile)) {
+                return response()->download($pathToFile, $name, $headers);
             } else {
-                $namenew = 'Fraud_Detections_'.$alertsId[0]->name.'_empty.'.$_ext;
+                $newExt = explode('.',$ext);
+                $_ext = end($newExt);       
+                $pathToFilenew = storage_path('frauddetections/frauddetections_empty.'.$_ext);
+                if($alertsId[0]->sid==''){
+                    $namenew = 'Fraud_Detections_empty.'.$_ext;
+                } else {
+                    $namenew = 'Fraud_Detections_'.$alertsId[0]->name.'_empty.'.$_ext;
+                }
+                return response()->download($pathToFilenew, $namenew, $headers);
             }
-            return response()->download($pathToFilenew, $namenew, $headers);
-        }         
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return ['status'=>0,'errot'=>$e->getMessage()];
+            }
+        }
     }
     /* END: This is to download a sample csv file but not using right now */
     /*START: Updates the alerts count on each page load & shows that count number in the menu  */
     public function getAlertsCount(Request $request) {
-        $count = DB::table('alerts')
-            ->where('acknowledged', 1)
-            ->count();
-        $request->session()->put('count_alert', $count);
-        return $count;
+        try{
+            $count = DB::table('alerts')
+                ->where('acknowledged', 1)
+                ->count();
+            $request->session()->put('count_alert', $count);
+            return $count;
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                $request->session()->put('count_alert', '0');
+                return 0;
+            }
+        }
     }
     /*END: Updates the alerts count on each page load & shows that count number in the menu */
 }

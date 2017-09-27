@@ -10,7 +10,7 @@
                         <div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span><em> {!! session('success') !!}</em></div>
                     @endif
                 </div>
-                <table class="table table-striped table-bordered dt-responsive nowrap" id="userList">
+                <table class="table table-striped table-bordered dt-responsive" id="userList">
                     <thead>
                         <tr>
                             <th>Username</th>
@@ -31,7 +31,7 @@
                                 <td>{{$portaluser->rname}}</td>
                                 <td>{{$portaluser->sname}}</td>
                                 <td>{{$portaluser->cname}}</td>
-                                <td>@if($portaluser->active==1)<i class="fa fa-check" aria-hidden="true"></i>@endif</td>
+                                <td align="center">@if($portaluser->active==1)<i class="fa fa-check" aria-hidden="true"></i>@endif</td>
                                 @if($portaluser->last_login !='')
                                     <td>{{ date('jS M Y h:i:s a', strtotime($portaluser->last_login)) }}</td>
                                 @else
@@ -45,7 +45,17 @@
                 <script type="text/javascript">
                     $(document).ready(function(){
                         $('#userList').DataTable({
-                            "aaSorting": [[ 1, "asc" ]]
+                            "aaSorting": [[ 1, "asc" ]],
+                            "columns": [
+                                { "width": "auto" },
+                                { "width": "10%" },
+                                { "width": "8%" },
+                                { "width": "10%" },
+                                { "width": "10%" },
+                                { "width": "8%" },
+                                { "width": "auto" },
+                                { "width": "6%" },
+                            ]
                         });
                     });
                     function destroy(id) {

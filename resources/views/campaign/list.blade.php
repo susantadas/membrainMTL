@@ -13,6 +13,7 @@
             @if(Session::has('success'))
                 <div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span><em> {!! session('success') !!}</em></div>
             @endif
+            <div id="success-errors"></div>
             <div class="bs-example4" data-example-id="contextual-table">
                 <table class="table table-striped table-bordered dt-responsive nowrap" id="campaign">
                     <thead>

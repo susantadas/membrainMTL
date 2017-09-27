@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         Commands\DownloadCSV::class,
         Commands\DownloadCSVfromsftp::class,
         Commands\UploadCSVfromsftp::class,
+        Commands\DownloadCSVQuarantine::class,
     ];
 
     protected function schedule(Schedule $schedule) {
@@ -25,6 +26,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('emailhistory:clear')->daily();
         $schedule->command('frauddetections:clear')->hourly();
         $schedule->command('fraudtable:clear')->hourly();
+        $schedule->command('downloadcsvquarantine:download')->cron('*/15 * * * * *')->withoutOverlapping();
         $schedule->command('downloadcsvfromsftp:download')->cron('*/10 * * * * *')->withoutOverlapping();
         $schedule->command('uploadcsvfromsftp:upload')->cron('*/10 * * * * *')->withoutOverlapping();
         $schedule->command('downloadcsv:download')->cron('*/15 * * * * *')->withoutOverlapping();

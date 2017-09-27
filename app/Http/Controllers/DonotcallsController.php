@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Donotcall; //Model name and Where model have
 use Excel; //csv file reader
 use DB;
+use App\Models\Api\LeadProcessTableCsv; //Model name and Where model have
 class DonotcallsController extends Controller
 {   
     /* Start authentication check */
@@ -28,78 +29,96 @@ class DonotcallsController extends Controller
    /* Start new data store in database with parameters(all request data)*/
     public function store(Request $request) {
         set_time_limit(0);
-        $error = array();
-        $succe = array();
-        $dup = array();
-        $notformeted = array();
-        $empty = 1;
-        $regexP = '/^[0-9]*$/';
-        if($request->hasFile('myfile')){
-            $path = $request->file('myfile')->getRealPath();
-            $CountData = Excel::load($path, function($reader) {})->get();
-            $data = fopen($path,'r');
-            if(!empty($CountData) && $CountData->count() > 0){
-                $Donotcall = DB::table('membrain_global_do_not_call')->truncate();
-                while (($lineP = fgetcsv($data)) !== FALSE) {
-                    $value = array('country_code'=>(isset($lineP[0]) ? $lineP[0] : ''),'phone_number'=>(isset($lineP[1]) ? $lineP[1] : ''),'reason_code'=>(isset($lineP[2]) ? $lineP[2] : ''));
-                    if(!empty($value['phone_number'])){
-                        if(!empty($value) && $value['phone_number']!=''){
-                            $validation = Validator::make($value,array(
-                                'phone_number' => 'required|numeric|unique:membrain_global_do_not_call',
-                            ));
+        try{
+            $error = array();
+            $succe = array();
+            $dup = array();
+            $notformeted = array();
+            $empty = 1;
+            $regexP = '/^[0-9]*$/';
+            if($request->hasFile('myfile')){
+                $path = $request->file('myfile')->getRealPath();
+                $CountData =  Excel::selectSheetsByIndex(0)->load($path, function($reader){
+                    $results = $reader->noHeading();
+                })->get();
+                if(!empty($CountData) && $CountData->count() > 0){
+                    $Donotcall = DB::table('membrain_global_do_not_call')->truncate();
+                    foreach ($CountData as $key => $lineP) {
+                        $linePTabdilimited = explode("\t",$lineP[0]);
+                        $country_code = (isset($linePTabdilimited[0]) ? $linePTabdilimited[0] : (isset($lineP[0]) ? $lineP[0] : ''));
+                        $phone_number = (isset($linePTabdilimited[1]) ? $linePTabdilimited[1] : (isset($lineP[1]) ? $lineP[1] : ''));
+                        $reason_code = (isset($linePTabdilimited[2]) ? $linePTabdilimited[2] : (isset($lineP[2]) ? $lineP[2] : ''));
+                        $value = array('country_code'=>($country_code!='' ? $country_code : ''),'phone_number'=>($phone_number!='' ? $phone_number : ''),'reason_code'=>($reason_code!='' ? $reason_code : ''));
+                        if(!empty($value['phone_number'])){
+                            if(!empty($value) && $value['phone_number']!=''){
+                                $validation = Validator::make($value,array(
+                                    'phone_number' => 'required|numeric|unique:membrain_global_do_not_call',
+                                ));
 
-                            if($validation->fails()) {
-                                $dup[]=0;
-                            } else {
-                                /* Start Check country wise phone number */
-                                $countrycode = array('AU','NZ','UK','CA','US');
-                                $phonelength = strlen((string)$value['phone_number']);
-                                if($phonelength >= 9 && $phonelength <= 11 && $value['country_code'] == 'AU'){
-                                    $valid = 1;
-                                } elseif ($phonelength >= 9 && $phonelength <= 11 && $value['country_code'] == 'NZ') {
-                                    $valid = 1;
-                                } elseif ($phonelength >= 10 && $phonelength <= 11 && $value['country_code'] == 'UK') {
-                                    $valid = 1;
-                                } elseif ($phonelength == 11 && $value['country_code'] == 'CA') {
-                                    $valid = 1;
-                                } elseif ($phonelength == 11 && $value['country_code'] == 'US') {
-                                    $valid = 1;
-                                } elseif ($phonelength == 10 && !in_array($value['country_code'], $countrycode)) {
-                                    $valid = 1;
+                                if($validation->fails()) {
+                                    $dup[]=0;
                                 } else {
-                                    $valid = 0;
-                                } 
-                                /* End Check country wise phone number */
-                                if($valid == 1){
-                                    $donotcall = new Donotcall;
-                                    $donotcall->country_code = $value['country_code'];
-                                    $donotcall->phone_number = $value['phone_number'];
-                                    $donotcall->reason_code = $value['reason_code'];
-                                    if(!$donotcall->save()){
-                                        $error[]=0;
+                                    /* Start Check country wise phone number */
+                                    $cunCode = $value['country_code'];
+                                    if($cunCode!=''){
+                                        $LeadProcessValidation = new LeadProcessTableCsv();
+                                        $pnpps = $LeadProcessValidation->phoneNumberPreProcessing($value['phone_number'],$cunCode);
+                                        if($pnpps['status']=='0'){
+                                            $valid = 0;
+                                            $errorsNew= 'Invalid Phone Number';
+                                            $st = 2;
+                                        } elseif ($pnpps['status']=='2') {
+                                            $valid = 0;
+                                            $errorsNew = 'Invalid Phone Number and country code';
+                                            $st = 2;
+                                        } elseif ($pnpps['status']=='3'){
+                                            $valid = 0;
+                                            $errorsNew = 'Required phone number';
+                                            $st = 2;
+                                        } else {
+                                            $valid = 1;
+                                            $newphoneNumber = $pnpps['phone'];
+                                        }
                                     } else {
-                                        $succe[] = 1;
+                                        $valid = 0;
+                                        $errorsNew = 'Missing country. Please select country';
+                                        $st = 2;
+                                    } 
+                                    /* End Check country wise phone number */
+                                    if($valid == 1){
+                                        $donotcall = new Donotcall;
+                                        $donotcall->country_code = $value['country_code'];
+                                        $donotcall->phone_number = $value['phone_number'];
+                                        $donotcall->reason_code = $value['reason_code'];
+                                        if(!$donotcall->save()){
+                                            $error[]=0;
+                                        } else {
+                                            $succe[] = 1;
+                                        }
+                                    } else {
+                                        $error[]=0;
                                     }
-                                } else {
-                                    $error[]=0;
                                 }
                             }
+                        } else {
+                            $notformeted[] = 1;
                         }
-                    } else {
-                        $notformeted[] = 1;
                     }
+                } else {
+                    $empty=0;
                 }
-            } else {
-                $empty=0;
             }
-            fclose($data);
+            if(count($succe)>1){
+                $status=1;
+            } else {
+                $status=0;
+            }
+            return array('status'=>$status,'error'=>(count($error) + count($dup)),'success'=>count($succe),'empty'=>$empty,'total'=>$CountData->count(),'dup'=>count($dup),'notformeted'=>count($notformeted));
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return array('status'=>'2','error'=>$e->getMessage());
+            }
         }
-        if(count($succe)>1){
-            $status=1;
-        } else {
-            $status=0;
-        }
-        return array('status'=>$status,'error'=>(count($error) + count($dup)),'success'=>count($succe),'empty'=>$empty,'total'=>$CountData->count(),'dup'=>count($dup),'notformeted'=>count($notformeted));
     }
     /* End new data store in database with parameters(all request data)*/
     /* Start show created page not needed */
@@ -124,12 +143,18 @@ class DonotcallsController extends Controller
     /* End show created page not needed */
     /* Start particular quarantines csv file */
     public function downloadExcelFile($type){
-        $donotcalls = Donotcall::get(['country_code','phone_number','reason_code'])->toArray();
-        return Excel::create('donotcall', function($excel) use ($donotcalls) {
-            $excel->sheet('donotcall', function($sheet) use ($donotcalls) {
-                $sheet->fromArray($donotcalls);
-            });
-        })->download($type);
+        try{
+            $donotcalls = Donotcall::get(['country_code','phone_number','reason_code'])->toArray();
+            return Excel::create('donotcall', function($excel) use ($donotcalls) {
+                $excel->sheet('donotcall', function($sheet) use ($donotcalls) {
+                    $sheet->fromArray($donotcalls);
+                });
+            })->download($type);
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return $e->getMessage();
+            }
+        }
     }
     /* End particular quarantines csv file */
 }

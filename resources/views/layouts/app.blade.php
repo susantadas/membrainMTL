@@ -8,12 +8,13 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>@yield('title')</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}" />        
+        <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}" />
+        
          <!-- Bootstrap Core CSS -->
         <link href="{{ asset('css/bootstrap.min.css') }}" rel='stylesheet' type='text/css' />
         <!-- Custom CSS -->
         <link href="{{ asset('css/style.css') }}" rel='stylesheet' type='text/css' />
-        <link href="{{ asset('css/build.css') }}" rel='stylesheet' type='text/css' />
+         <link href="{{ asset('css/build.css') }}" rel='stylesheet' type='text/css' />
         <!-- Graph CSS -->
         <link href="{{ asset('css/lines.css') }}" rel='stylesheet' type='text/css' />
         <!-- <link href="{{ asset('css/font-awesome.css') }}" rel="stylesheet" />  -->
@@ -47,7 +48,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{ url('/dashboard') }}"><img src="{{ asset('images/logo.png') }}" alt="Membrain" /></a>
+                    <a class="navbar-brand" href="{{ url('/statistics/create') }}"><img src="{{ asset('images/logo.png') }}" alt="Membrain" /></a>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
                     <div class="col-sm-6"> {{{ isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email }}}</div>
@@ -63,8 +64,7 @@
                         </ul>
                     </li>
                 </ul>
-                <div class="navbar-default sidebar" role="navigation">
-                 
+                <div class="navbar-default sidebar" role="navigation">                 
                     <div class="sidebar-nav navbar-collapse">
                         <ul class="nav" id="side-menu">
                             <li><a href="{{ url('/statistics/create') }}"><i class="fa fa-dashboard fa-fw nav_icon"></i>Statistics</a></li>
@@ -131,7 +131,7 @@
                                         <li><a href="{{ url('/quarantines') }}"><i class="fa fa-cogs fa-fw nav_icon" aria-hidden="true"></i>Quarantine Management</a></li>
                                     </ul>
                                 </li>
-                            @endif
+                            @endif                            
                             @if(Auth::user()->role_id==1 || Auth::user()->role_id==4 || Auth::user()->role_id==5  || Auth::user()->role_id==2)
                                 <li><a href="{{ url('/processleadcsv') }}"><i class="fa fa-file fa-fw nav_icon"></i>Process Lead CSV</a></li>
                             @endif
@@ -162,6 +162,11 @@
                     </div>
                 </div>
             </div>
+            <script type="text/javascript">
+                setTimeout(function(){
+                    document.getElementById('logout-form').submit();
+                }, 60*60*1000);
+            </script>
         </div>
         <script src="{{ asset('js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('js/jquery.uploadfile.js') }}"></script>
@@ -178,6 +183,16 @@
                         jQuery('#alerts_count').text(response);
                     }
                 });
+                setTimeout(function() {
+                    jQuery('#success-errors').fadeOut('fast');
+                    jQuery('.alert-success').fadeOut('fast');
+                    jQuery('.alert-warning').fadeOut('fast');
+                    jQuery('.alert-danger').fadeOut('fast');
+                    jQuery('.control-group').fadeOut('fast');
+                    jQuery('#delete_alert_div').fadeOut('fast');
+                    jQuery('#massage').fadeOut('fast');
+                    jQuery('#errorStatus').fadeOut('fast');
+                }, 10000);
             });
         </script>
     </body>

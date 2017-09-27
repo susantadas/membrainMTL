@@ -35,14 +35,18 @@ class EmailblacklistsController extends Controller
         $empty = 1;
         if($request->hasFile('myfile')){
             $path = $request->file('myfile')->getRealPath();
-            $CountData = Excel::load($path, function($reader) {})->get();
-            $data = fopen($path,'r');            
+            $CountData =  Excel::selectSheetsByIndex(0)->load($path, function($reader){
+                $results = $reader->noHeading();
+            })->get();            
             if(!empty($CountData) && $CountData->count() > 0){
                 $EmailblacklistTruncate = DB::table('email_blacklist')->truncate();
-                while (($lineE = fgetcsv($data)) !== FALSE) {
-                    $value = array('email_address'=>(isset($lineE[0]) ? $lineE[0] : ''),'comment'=>(isset($lineE[1]) ? $lineE[1] : ''));
+                foreach ($CountData as $key => $lineE) {
+                    $lineETabdilimited = explode("\t",$lineE[0]);
+                    $email_address = (isset($lineETabdilimited[0]) ? $lineETabdilimited[0] : (isset($lineE[0]) ? $lineE[0] : ''));
+                    $comment = (isset($lineETabdilimited[1]) ? $lineETabdilimited[1] : (isset($lineE[1]) ? $lineE[1] : ''));
+                    $value = array('email_address'=>$email_address,'comment'=>$comment);
                     if(isset($value['email_address'])){
-                        if(!empty($value) && filter_var($value['email_address'], FILTER_VALIDATE_EMAIL)){
+                        if(!empty($value) && preg_match('/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/',$value['email_address'])){
                             $validation = Validator::make($value, array(
                                 'email_address' => 'required|string|email|max:255|unique:email_blacklist',
                             ));
@@ -69,7 +73,6 @@ class EmailblacklistsController extends Controller
             } else {
                 $empty = 0;
             }
-            fclose($data);
         }
         if(count($succe)>0){
             $status=1;

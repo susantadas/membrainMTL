@@ -14,6 +14,11 @@
                     {{ session('delete_error') }}
                 </div>
             @endif
+            <div id="success-errors">
+                @if(Session::has('success'))
+                    <div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span><em> {!! session('success') !!}</em></div>
+                @endif
+            </div>
             <div id="delete_qua_div">
                 <span class="delete_qua_ok" style="color:green;text-align: center"></span>
                 <span class="delete_qua_error" style="color:red;text-align: center"></span>

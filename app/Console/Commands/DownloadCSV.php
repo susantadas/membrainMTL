@@ -56,7 +56,7 @@ class DownloadCSV extends Command
                                 mkdir($newpath_to_upload, 0777, true);
                             }
 
-                            $move    =  File::move($path.'/'.$latest_filename, $newpath_to_upload.'/'.$latest_filename);
+                            $move = File::move($path.'/'.$latest_filename, $newpath_to_upload.'/'.$latest_filename);
 
                             if($move == 1){
                                 echo "\nFile is downloaded.";    

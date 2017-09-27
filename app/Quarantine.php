@@ -13,6 +13,15 @@ class Quarantine extends Model
         );
         return Validator::make($input,$rules);
     }
+
+    public function supplier() {
+        return $this->hasMany('App\Supplier','id', 'supplier_id');
+    }
+
+    public function campaign() {
+        return $this->hasMany('App\Campaign','id', 'campaign_id');
+    }    
+
     public $timestamps = false;
     protected $fillable = array(
         'filename',

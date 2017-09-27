@@ -31,21 +31,27 @@ class MultipleapiController extends Controller
     /* end show created page */
     /* Start new data store in database with parameters(all request data)*/
     public function store(Request $request) {
-        $multipleapi = new Multipleapi;
-        $multipleapi->type = $request->input('type');
-        $multipleapi->country_code = $request->input('country_code');
-        $multipleapi->apiurl = $request->input('apiurl');
-        $multipleapi->credentials_detaila = $request->input('credentials_detaila');
-        $multipleapi->status = (bool)$request->input('status');        
-        $multipleapi->created_at = Carbon::createFromFormat('Y-m-d g:i A', date('Y-m-d h:i:s a'));
-        $multipleapi->updated_at = Carbon::createFromFormat('Y-m-d g:i A', date('Y-m-d h:i:s a'));
-        if(!$multipleapi->save()){
-            $valid = '0';
-        } else {
-            \Session::flash('success','Api has been created.');
-            $valid = '1';
+        try{
+            $multipleapi = new Multipleapi;
+            $multipleapi->type = $request->input('type');
+            $multipleapi->country_code = $request->input('country_code');
+            $multipleapi->apiurl = $request->input('apiurl');
+            $multipleapi->credentials_detaila = $request->input('credentials_detaila');
+            $multipleapi->status = (bool)$request->input('status');        
+            $multipleapi->created_at = Carbon::createFromFormat('Y-m-d g:i A', date('Y-m-d h:i:s a'));
+            $multipleapi->updated_at = Carbon::createFromFormat('Y-m-d g:i A', date('Y-m-d h:i:s a'));
+            if(!$multipleapi->save()){
+                $valid = '0';
+            } else {
+                \Session::flash('success','Api has been created.');
+                $valid = '1';
+            }
+            return $valid;
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return 0;
+            }
         }
-        return $valid;
     }
     /* End new data store in database with parameters(all request data)*/
     /* Start show multipleapis details not need this project */
@@ -63,29 +69,41 @@ class MultipleapiController extends Controller
     /* Start show edit page with all data particuler multipleapis */
     /* Start data update in database for particular multipleapis with parameters(all request data & and multipleapis id)*/
     public function update(Request $request, $id) {
-        $multipleapi = Multipleapi::find($id);
-        $multipleapi->type = $request->input('type');
-        $multipleapi->country_code = $request->input('country_code');
-        $multipleapi->apiurl = $request->input('apiurl');
-        $multipleapi->credentials_detaila = $request->input('credentials_detaila');
-        $multipleapi->status = (bool)$request->input('status');        
-        $multipleapi->updated_at = Carbon::createFromFormat('Y-m-d g:i A', date('Y-m-d h:i:s a'));
-        if(!$multipleapi->save()){
-            $valid = '0';
-        } else {
-            \Session::flash('success','Api has been updated.');
-            $valid = '1';
+        try{
+            $multipleapi = Multipleapi::find($id);
+            $multipleapi->type = $request->input('type');
+            $multipleapi->country_code = $request->input('country_code');
+            $multipleapi->apiurl = $request->input('apiurl');
+            $multipleapi->credentials_detaila = $request->input('credentials_detaila');
+            $multipleapi->status = (bool)$request->input('status');        
+            $multipleapi->updated_at = Carbon::createFromFormat('Y-m-d g:i A', date('Y-m-d h:i:s a'));
+            if(!$multipleapi->save()){
+                $valid = '0';
+            } else {
+                \Session::flash('success','Api has been updated.');
+                $valid = '1';
+            }
+            return $valid;
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return $e->getMessage();
+            }
         }
-        return $valid;
     }
     /* End data update in database for particular multipleapis with parameters(all request data & and multipleapis id)*/
     /* Start particular multipleapis delete from database */    
     public function destroy($id) {
-        $multipleapi = Multipleapi::find($id);
-        if(!$multipleapi->delete()){
-            return 0;
-        } else {
-            return 1;
+        try{
+            $multipleapi = Multipleapi::find($id);
+            if(!$multipleapi->delete()){
+                return 0;
+            } else {
+                return 1;
+            }
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return 0;
+            }
         }
     }
     /* End particular multipleapis delete from database */ 

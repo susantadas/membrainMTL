@@ -37,7 +37,7 @@
                                 autoSubmit:true,
                                 fileName:'myfile',
                                 allowedTypes : 'csv',
-                                formData: {'_token':'{{csrf_token()}}','id':newId},
+                                formData: {'_token':'{{ csrf_token() }}','id':newId},
                                 maxFileCount:1,
                                 onSuccess : function(files,data,xhr) {
                                     if(data.status==1){
@@ -91,8 +91,6 @@
                                 data: $(form).serialize(),
                                 success: function(response) {
                                     if(response==1){
-                                        jQuery('#massage').text('Quarantine Updated Successfully').addClass('success').removeClass('errors');
-                                        $('html').animate({ scrollTop: 0 }, 300);
                                         setTimeout(function(){
                                             window.location.href = "{{ action('QuarantinesController@index') }}";
                                         }, 3000);

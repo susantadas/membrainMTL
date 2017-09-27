@@ -16,29 +16,18 @@ class DownloadCSVfromsftp extends Command
     }
 
     public function handle() {
-        /*$details = array(
-            'host'     => '67.23.226.139',
-            'port'     => 22,
-            'username' => 'midclass',
-            'password' => 'RX(dmjKvSB(UJedVXKBJ', // uou can set password or key path 
-            'root' => '/public_html/supplier-file/',
-            'timeout' => 10,
-            'directoryPerm' => 0755,
-            'type'=>'ftp'
-        );*/
-
-        $newkey = 'ppk/anupam_aws.ppk';
+        $newkey = Config('app.sftp-privateKey');
         $newkeyPath = storage_path($newkey);
         $details = array(
-            'host'     => '52.77.182.246',
-            'port'     => 22,
-            'username' => 'ec2-user',
-            'password' => '',
+            'host'     => Config('app.sftp-host'),
+            'port'     => Config('app.sftp-port'),
+            'username' => Config('app.sftp-username'),
+            'password' => Config('app.sftp-password'),
             'privateKey' => "$newkeyPath",
-            'root' => '/var/www/html/membraindev/supplier-file/',
+            'root' => Config('app.sftp-root'),
             'timeout' => 10,
-            'directoryPerm' => 0755,
-            'type'=>'sftp'
+            'directoryPerm' => 0777,
+            'type'=>Config('app.sftp-type')
         );
         if($details['type']=='ftp'){
             $Response ='';
@@ -54,7 +43,7 @@ class DownloadCSVfromsftp extends Command
                 $suppliers = DB::table('suppliers')->select('id', 'public_id', 'error_allowance','return_csv')->get();
                 foreach($suppliers as $_supplier){
                     $ftppath = $details['root'].$_supplier->public_id.'/upload/';
-                    $storepath = 'supplier-file/'.$_supplier->public_id.'/upload/';
+                    $storepath = 'supplier_files/'.$_supplier->public_id.'/upload/';
                     $Localpath = storage_path($storepath);
                     $contents = ftp_nlist($conn_id, $ftppath);
                     if(!empty($contents)){
@@ -80,10 +69,10 @@ class DownloadCSVfromsftp extends Command
             }
             ftp_close($conn_id);
             echo $Response;
-        } else {
+        } else {            
             $Response ='';
             $sftp = new SFTP($details['host']);
-            if($details['privateKey']!='' && $details['password']==''){
+            if($details['privateKey']!=''){
                 $password = new RSA();
                 // If the private key has a passphrase we set that first
                 $password->setPassword('passphrase');
@@ -94,33 +83,129 @@ class DownloadCSVfromsftp extends Command
             }
             if (!$sftp->login($details['username'],$password)) {
                 throw new Exception('Login failed');
-            } else {
-                $suppliers = DB::table('suppliers')->select('id', 'public_id', 'error_allowance','return_csv')->get();
-                foreach($suppliers as $_supplier){
-                    $ftppath = $details['root'].$_supplier->public_id.'/upload/';
-                    $storepath = 'supplier-file/'.$_supplier->public_id.'/upload/';
-                    $Localpath = storage_path($storepath);
-                    $contents = $sftp->nlist($ftppath);
-                    if(!empty($contents)){
-                        foreach($contents as $file){
-                            if($file =='.' || $file=='..'){
-                                $Response .="\nThere was a problem";
-                            } else {
-                                File::makeDirectory($Localpath, $mode = 0777, true, true);
-                                $newfile = fopen($Localpath.$file, 'w');fclose($newfile);
-                                if($sftp->get($ftppath.$file,$Localpath.$file)){
-                                    if ($sftp->delete($ftppath.$file)) {
-                                        $Response .="\n$file deleted successful\n";
-                                    } else {
-                                        $Response .="\ncould not delete $file\n";
+            } else {                
+                $contentsFolder = $sftp->nlist($details['root']);
+                if(!empty($contentsFolder)){
+                    foreach($contentsFolder as $folder){
+                        if($folder !='.' && $folder!='..' && $folder!='.ssh'){
+                            $suppliers = DB::table('suppliers')->where('public_id','=',$folder)->get()->toArray();
+                            if(!empty($suppliers)){
+                                $folderNew = $sftp->nlist($details['root'].$folder.'/');
+                                if(!empty($folderNew)){
+                                    foreach ($folderNew as $fk => $_folderNew) {
+                                        if($_folderNew !='upload'){
+                                            unset($folderNew[$fk]);
+                                        }
                                     }
-                                } else {
-                                    $Response .="\nThere was a problem\n";
-                                }                              
+                                    foreach ($folderNew as $_folderNew) {
+                                        if($_folderNew !='.' && $_folderNew!='..'){
+                                            $ftppath = $details['root'].$folder.'/upload/';
+                                            $storepath = 'supplier_files/'.$folder.'/upload/';
+                                            $Localpath = storage_path($storepath);
+                                            $storepathDownload = 'supplier_files/'.$folder.'/download/';
+                                            $_storepathDownload = storage_path($storepathDownload);
+                                            $contents = $sftp->nlist($ftppath);
+                                            if(!empty($contents)){
+                                                foreach($contents as $file){
+                                                    if($file !='.' && $file!='..'){
+                                                        $newFileforCan = explode('_',$file);
+                                                        $campaigns = DB::table('campaigns')->where('public_id', '=', $newFileforCan[0])->get()->toArray();
+                                                        if(!empty($campaigns)){
+                                                            File::makeDirectory($Localpath, $mode = 0777, true, true);
+                                                            File::makeDirectory($_storepathDownload, $mode = 0777, true, true);
+                                                            $newfile = fopen($Localpath.$file, 'w');fclose($newfile);
+                                                            if($sftp->get($ftppath.$file,$Localpath.$file)){
+                                                                if ($sftp->delete($ftppath.$file)) {
+                                                                    $Response .="\n$file deleted successful\n";
+                                                                } else {
+                                                                    $Response .="\ncould not delete $file\n";
+                                                                }
+                                                            } else {
+                                                                $Response .="\nThere was a problem\n";
+                                                            }
+                                                        } else {
+                                                            $storepathAlert = 'supplier_files/portal_csv_upload/download/';
+                                                            $filename = $newFileforCan[0].'_invalid.csv';
+                                                            $LocalpathAlert = storage_path($storepathAlert);
+                                                            $newfile = fopen($LocalpathAlert.$filename, 'w');fclose($newfile);
+                                                            $alertError = array('supplier_id'=>$suppliers[0]->id,'subject'=>'Invalid SFTP Campaign ID','body'=>'Invalid SFTP Campaign ID','filename'=>$filename,'acknowledged'=>'1','created'=>date('Y-m-d H:i:s'));
+                                                            DB::table('alerts')->insert($alertError);
+                                                            if($sftp->get($ftppath.$file,$LocalpathAlert.$filename)){
+                                                                if ($sftp->delete($ftppath.$file)) {
+                                                                    $Response .="\n$file deleted successful\n";
+                                                                } else {
+                                                                    $Response .="\ncould not delete $file\n";
+                                                                }
+                                                            } else {
+                                                                $Response .="\nThere was a problem\n";
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {                                
+                                $folderNew = $sftp->nlist($details['root'].$folder.'/');
+                                if(!empty($folderNew)){
+                                    foreach ($folderNew as $fk => $_folderNew) {
+                                        if($_folderNew !='upload'){
+                                            unset($folderNew[$fk]);
+                                        }
+                                    }
+                                    foreach ($folderNew as $_folderNew) {
+                                        if($_folderNew !='.' && $_folderNew!='..'){
+                                            $ftppath = $details['root'].$folder.'/upload/';
+                                            $contents = $sftp->nlist($ftppath);
+                                            if(!empty($contents)){
+                                                foreach($contents as $file){
+                                                    if($file !='.' && $file!='..' && $file!='known_hosts'){
+                                                        $newFileforCan = explode('_',$file);
+                                                        $campaigns = DB::table('campaigns')->where('public_id', '=', $newFileforCan[0])->get()->toArray();
+                                                        if(!empty($campaigns)){
+                                                            $storepathAlert = 'supplier_files/portal_csv_upload/download/';
+                                                            $filename = $newFileforCan[0].'_invalid.csv';
+                                                            $LocalpathAlert = storage_path($storepathAlert);
+                                                            $newfile = fopen($LocalpathAlert.$filename, 'w');fclose($newfile);
+                                                            $alertError = array('supplier_id'=>'0','subject'=>'Invalid SFTP Supplier ID','body'=>'Invalid SFTP Supplier ID','filename'=>$filename,'acknowledged'=>'1','created'=>date('Y-m-d H:i:s'));
+                                                            DB::table('alerts')->insert($alertError);
+                                                            if($sftp->get($ftppath.$file,$LocalpathAlert.$filename)){
+                                                                if ($sftp->delete($ftppath.$file)) {
+                                                                    $Response .="\n$file deleted successful\n";
+                                                                } else {
+                                                                    $Response .="\ncould not delete $file\n";
+                                                                }
+                                                            } else {
+                                                                $Response .="\nThere was a problem\n";
+                                                            }
+                                                        } else {
+                                                            $storepathAlert = 'supplier_files/portal_csv_upload/download/';
+                                                            $filename = $newFileforCan[0].'_invalid.csv';
+                                                            $LocalpathAlert = storage_path($storepathAlert);
+                                                            $newfile = fopen($LocalpathAlert.$filename, 'w');fclose($newfile);
+                                                            $alertError = array('supplier_id'=>'0','subject'=>'Invalid SFTP Supplier Id & Campaign ID','body'=>'Invalid SFTP Supplier ID & Campaign ID','filename'=>$filename,'acknowledged'=>'1','created'=>date('Y-m-d H:i:s'));
+                                                            DB::table('alerts')->insert($alertError);
+                                                            if($sftp->get($ftppath.$file,$LocalpathAlert.$filename)){
+                                                                if ($sftp->delete($ftppath.$file)) {
+                                                                    $Response .="\n$file deleted successful\n";
+                                                                } else {
+                                                                    $Response .="\ncould not delete $file\n";
+                                                                }
+                                                            } else {
+                                                                $Response .="\nThere was a problem\n";
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                }
+                }                
             }
             echo $Response;
         }

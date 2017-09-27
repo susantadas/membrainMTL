@@ -87,9 +87,9 @@
                         $('#details').text('');
                         $('#file').html('');
                         $('.id').val('');
-
                         $('#modal_alert').text(subject);
-                        $('#details').text(body);
+                        var detailsNewValue = body.replace(/~/g, "<br>");
+                        $('#details').html(detailsNewValue);
                         $('#newid').val(id);
                         $('#whoAcknowledge').text(whoacknow);
                         $('#dateAcknowledge').text(dateAcknowledge);

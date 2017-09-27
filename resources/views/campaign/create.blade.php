@@ -50,7 +50,7 @@
                 <div class="col-sm-6">
                   <select class="form-control1 unique-areRange" name="start_age" id="start_age">
                     <option value="">---Please Select Min Age---</option>
-                    @for($i=0;$i<100;$i++)
+                    @for($i=1;$i<100;$i++)
                       <option value="{{$i}}">{{$i}}</option>
                     @endfor
                   </select>
@@ -58,7 +58,7 @@
                 <div class="col-sm-6">
                   <select class="form-control1 unique-areRange" name="end_age" id="end_age">
                   <option value="">---Please Select Max Age---</option>
-                    @for($i=0;$i<100;$i++)
+                    @for($i=2;$i<101;$i++)
                       <option value="{{$i}}">{{$i}}</option>
                     @endfor
                   </select>
@@ -116,7 +116,7 @@
               <div class="col-sm-6">
                 <label class="control-label">&nbsp;</label>
                 <div class="checkboxb checkbox-primary">
-                  <input id="active" name="active" type="checkbox" checked="checked">
+                  <input id="active" name="active" type="checkbox" checked="checked" value="1">
                   <label for="active">
                     Active
                   </label>
@@ -713,6 +713,22 @@
                   return this.optional(element) || notEqual;
             },"Please enter a diferent value.");
 
+            $.validator.addMethod("geterthenendage", function(value, element, param) {
+                if(parseInt(value) > parseInt($(param).val())){
+                  return  this.optional(element) || false;
+                }else{
+                  return  this.optional(element) || true;
+                }
+            },"Starting age must be geter then ending age.");
+
+            $.validator.addMethod("lessthenage", function(value, element, param) {
+                if(parseInt(value) < parseInt($(param).val())){
+                  return  this.optional(element) || false;
+                }else{
+                  return  this.optional(element) || true;
+                }
+            },"Ending age must be less then starting age.");
+
             $.validator.addMethod("notEqualToGroup", function (value, element, options) {
                 // get all the elements passed here with the same class
                 var elems = $(element).parents('form').find(options[0]);
@@ -724,8 +740,10 @@
                 // and increase the count every time we find one
                 jQuery.each(elems, function () {
                     thisVal = $(this).val();
-                    if (thisVal == valueToCompare) {
-                        matchesFound++;
+                    if(thisVal!=''){
+                      if (thisVal == valueToCompare) {
+                          matchesFound++;
+                      }
                     }
                 });
                 // count should be either 0 or 1 max
@@ -753,12 +771,14 @@
                   required: function(el){
                     return $(el).closest('form').find('#age_criteria').is(':checked') == true;
                   },
+                  geterthenendage: '#end_age',
                   notEqualToGroup: ['.unique-areRange']
                 },
                 end_age:{
                   required: function(el){
                     return $(el).closest('form').find('#age_criteria').is(':checked') == true;
                   },
+                  lessthenage: '#start_age',
                   notEqualToGroup: ['.unique-areRange']
                 },
                 state_list:{
@@ -779,21 +799,100 @@
                   required:"#endpoint:visible",
                   url: true, 
                 },
-                email:{ require_from_group: [1, ".api-valid-group"],notEqualToGroup: ['.unique-api'] },
-                phone:{ require_from_group: [1, ".api-valid-group"],notEqualToGroup: ['.unique-api'] },  
-                title:{ notEqualToGroup: ['.unique-api'] },
-                firstName:{ notEqualTo: ['#lastName'],notEqualToGroup: ['.unique-api'] },
-                lastName:{ notEqualTo: ['#firstName'],notEqualToGroup: ['.unique-api'] },
-                birthdate:{ notEqualToGroup: ['.unique-api'], },
-                age:{ notEqualToGroup: ['.unique-api'] },
-                ageRange:{ notEqualToGroup: ['.unique-api'] },
-                gender:{ notEqualToGroup: ['.unique-api'] },
-                address1:{ notEqualToGroup: ['.unique-api'] },
-                address2:{ notEqualToGroup: ['.unique-api'] },
-                city:{ notEqualToGroup: ['.unique-api'] },
-                state:{ notEqualToGroup: ['.unique-api'] },
-                postcode:{ notEqualToGroup: ['.unique-api'] },
-                countryCode:{ notEqualToGroup: ['.unique-api'] },
+                email:{ 
+                  required:function(el){
+                    return $(el).closest('form').find('#apiemail').is(':checked') == true;
+                  },
+                  //require_from_group: [1, ".api-valid-group"],
+                  notEqualToGroup: ['.unique-api'] 
+                },
+                phone:{                   
+                  required:function(el){
+                    return $(el).closest('form').find('#apiphone').is(':checked') == true;
+                  },
+                  //require_from_group: [1, ".api-valid-group"],
+                  notEqualToGroup: ['.unique-api'] 
+                },  
+                title:{
+                  required:function(el){
+                    return $(el).closest('form').find('#apititle').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                firstName:{
+                  required:function(el){
+                    return $(el).closest('form').find('#apifirstName').is(':checked') == true;
+                  },
+                  notEqualTo: ['#lastName'],
+                  notEqualToGroup: ['.unique-api']
+                },
+                lastName:{
+                  required:function(el){
+                    return $(el).closest('form').find('#apilastName').is(':checked') == true;
+                  },
+                  notEqualTo: ['#firstName'],
+                  notEqualToGroup: ['.unique-api']
+                },
+                birthdate:{
+                  required:function(el){
+                    return $(el).closest('form').find('#apibirthdate').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                age:{                  
+                  required:function(el){
+                    return $(el).closest('form').find('#apiage').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                ageRange:{
+                  required:function(el){
+                    return $(el).closest('form').find('#apiageRange').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                gender:{
+                  required:function(el){
+                    return $(el).closest('form').find('#apigender').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                address1:{                  
+                  required:function(el){
+                    return $(el).closest('form').find('#apiaddress1').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                address2:{
+                  required:function(el){
+                    return $(el).closest('form').find('#apiaddress2').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                city:{                  
+                  required:function(el){
+                    return $(el).closest('form').find('#apicity').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                state:{
+                  required:function(el){
+                    return $(el).closest('form').find('#apistate').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                postcode:{                  
+                  required:function(el){
+                    return $(el).closest('form').find('#apipostcode').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
+                countryCode:{
+                  required:function(el){
+                    return $(el).closest('form').find('#apicountryCode').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique-api']
+                },
                 server_type:{
                   required:"#server_type:visible"
                 },
@@ -811,26 +910,95 @@
                   required:"#csv_password:visible"
                 },
                 csv_email:{
-                  require_from_group: [1, ".csv-required-group"],
+                  required:function(el){
+                    return $(el).closest('form').find('#csvemail').is(':checked') == true;
+                  },
                   notEqualToGroup: ['.unique']
                 },
                 csv_phone:{
-                  require_from_group: [1, ".csv-required-group"],
+                  required:function(el){
+                    return $(el).closest('form').find('#csvphone').is(':checked') == true;
+                  },
                   notEqualToGroup: ['.unique']
                 },
-                csv_title:{ notEqualToGroup: ['.unique'] },
-                csv_firstName:{ notEqualToGroup: ['.unique'] },
-                csv_lastName:{ notEqualToGroup: ['.unique'] },
-                csv_birthdate:{ notEqualToGroup: ['.unique'] },
-                csv_age:{ notEqualToGroup: ['.unique'] },
-                csv_ageRange:{ notEqualToGroup: ['.unique'] },
-                csv_gender:{ notEqualToGroup: ['.unique'] },
-                csv_address1:{ notEqualToGroup: ['.unique'] },
-                csv_address2:{ notEqualToGroup: ['.unique'] },
-                csv_city:{ notEqualToGroup: ['.unique'] },
-                csv_state:{ notEqualToGroup: ['.unique'] },
-                csv_postcode :{ notEqualToGroup: ['.unique'] },
-                csv_countryCode :{ notEqualToGroup: ['.unique'] },
+                csv_title:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvtitle').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_firstName:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvfirstName').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_lastName:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvlastName').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_birthdate:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvbirthdate').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_age:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvage').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_ageRange:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvageRange').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_gender:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvgender').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_address1:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvaddress1').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_address2:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvaddress2').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_city:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvcity').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_state:{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvstate').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_postcode :{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvpostcode').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
+                csv_countryCode :{
+                  required:function(el){
+                    return $(el).closest('form').find('#csvcountryCode').is(':checked') == true;
+                  },
+                  notEqualToGroup: ['.unique']
+                },
               },
               messages: {
                 name: {
@@ -844,8 +1012,14 @@
                   required: "Please select a method.",
                 },
                 dncr_required:{required: "Please choose one."},
-                start_age:"Please select Min Age",
-                end_age:"Please select Max Age",
+                start_age:{
+                  required: "Please select starting Age",
+                  geterthenendage: 'Min age must be less then max age'
+                },
+                end_age:{
+                  required: "Please select ending Age",
+                  lessthenage: 'Mix age must be geter then min age.'
+                },
                 state_list:"Please enter a state",
                 postcode_list:{
                   required :"Please enter a postcode",

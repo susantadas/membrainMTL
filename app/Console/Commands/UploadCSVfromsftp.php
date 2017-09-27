@@ -16,30 +16,19 @@ class UploadCSVfromsftp extends Command
     }
 
     public function handle() {
-        /*$details = array(
-            'host'     => '67.23.226.139',
-            'port'     => 22,
-            'username' => 'midclass',
-            'password' => 'RX(dmjKvSB(UJedVXKBJ', // uou can set password or key path 
-            'root' => '/public_html/supplier-file/',
-            'timeout' => 10,
-            'directoryPerm' => 0755,
-            'type'=>'ftp'
-        );*/
-
-        $newkey = 'ppk/anupam_aws.ppk';
+        $newkey = Config('app.sftp-privateKey');
         $newkeyPath = storage_path($newkey);
         $details = array(
-            'host'     => '52.77.182.246',
-            'port'     => 22,
-            'username' => 'ec2-user',
-            'password' => '',
+            'host'     => Config('app.sftp-host'),
+            'port'     => Config('app.sftp-port'),
+            'username' => Config('app.sftp-username'),
+            'password' => Config('app.sftp-password'),
             'privateKey' => "$newkeyPath",
-            'root' => '/var/www/html/membraindev/supplier-file/',
+            'root' => Config('app.sftp-root'),
             'timeout' => 10,
-            'directoryPerm' => 0755,
-            'type'=>'sftp'
-        );
+            'directoryPerm' => 0777,
+            'type'=>Config('app.sftp-type')
+        );        
         if($details['type']=='ftp'){
             $Response ='';
             $conn_id = ftp_connect($details['host'], 21);
@@ -54,7 +43,7 @@ class UploadCSVfromsftp extends Command
                 $suppliers = DB::table('suppliers')->select('id', 'public_id', 'error_allowance','return_csv')->get();
                 foreach($suppliers as $_supplier){
                     $ftppath = $details['root'].$_supplier->public_id.'/download/';
-                    $storepath = 'supplier-file/'.$_supplier->public_id.'/download/';
+                    $storepath = 'supplier_files/'.$_supplier->public_id.'/download/';
                     $Localpath = storage_path($storepath);
                     if (is_dir($Localpath)) {
                         $contents = scandir($Localpath);
@@ -101,7 +90,7 @@ class UploadCSVfromsftp extends Command
                 $suppliers = DB::table('suppliers')->select('id', 'public_id', 'error_allowance','return_csv')->get();
                 foreach($suppliers as $_supplier){
                     $ftppath = $details['root'].$_supplier->public_id.'/download/';
-                    $storepath = 'supplier-file/'.$_supplier->public_id.'/download/';
+                    $storepath = 'supplier_files/'.$_supplier->public_id.'/download/';
                     $Localpath = storage_path($storepath);
                     if (is_dir($Localpath)) {
                         $contents = scandir($Localpath);
@@ -111,10 +100,11 @@ class UploadCSVfromsftp extends Command
                                     $Response .="\nThere was a problem";
                                 } else {
                                     $sftppath = $sftp->nlist($ftppath);
-                                    if(empty($sftppath)){
+                                    if(empty($sftppath)){                                        
                                         $sftp->mkdir($ftppath);
                                     }
-                                    if($sftp->put($ftppath.$file,$Localpath.$file)){
+                                    
+                                    if($sftp->put($ftppath.$file,file_get_contents($Localpath.$file))){
                                         $Response .="\n$file upload successful\n";
                                     } else {
                                         $Response .="\ncould not upload  $file\n";

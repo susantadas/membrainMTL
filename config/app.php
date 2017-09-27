@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE'),
 
     /*
     |--------------------------------------------------------------------------
@@ -106,6 +106,13 @@ return [
     'key' => env('APP_KEY'),
     'x-api-key' => env('x-api-key'),
     'cipher' => 'AES-256-CBC',
+    'sftp-host' => env('sftp-host'),
+    'sftp-port' => env('sftp-port'),
+    'sftp-username' => env('sftp-username'),
+    'sftp-password' => env('sftp-password'),
+    'sftp-privateKey' => env('sftp-privateKey'),
+    'sftp-root' => env('sftp-dir'),
+    'sftp-type' => env('sftp-type'),
 
     /*
     |--------------------------------------------------------------------------
@@ -178,6 +185,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Collective\Remote\RemoteServiceProvider::class,
+        XmlResponse\XmlResponseServiceProvider::class
 
     ],
 

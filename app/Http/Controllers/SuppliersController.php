@@ -1,5 +1,6 @@
 <?php // Controller name Suppliers
 namespace App\Http\Controllers; //name space mean where controller have
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Supplier;  //Model name and Where model have
 use DB;
@@ -23,25 +24,42 @@ class SuppliersController extends Controller
     /* end show created page */
     /* Start new data store in database with parameters(all request data)*/
     public function store(Request $request) {
-        $result = DB::table('suppliers')->where('contact_email',$request->input('contact_email'))->where('contact_phone','=',$request->input('contact_phone'),'OR')->get(['id']);
-        if($result->count() <='0'){
-            $suppliers = new Supplier;
-            $suppliers->public_id = hash('md5', 'MB#'.str_random(42));
-            $suppliers->name = $request->input('name');
-            $suppliers->contact_email = $request->input('contact_email');
-            $suppliers->contact_name = $request->input('contact_name');
-            $suppliers->contact_phone = $request->input('contact_phone');
-            $suppliers->error_allowance = $request->input('error_allowance');
-            $suppliers->return_csv = (bool)$request->input('return_csv');
-            $suppliers->active = (bool)$request->input('active');        
-            if(!$suppliers->save()){
-                return 0;
+        try{
+            $validation = Validator::make($request->input(), array(
+                'name' => 'required|regex:/^[a-zA-Z ]*$/|max:255',
+                'contact_email' => 'required|string|email|max:255|unique:suppliers',
+                'contact_name' => 'required|regex:/^[a-zA-Z ]*$/|max:255',
+                'contact_phone' => 'required|numeric|max:255|unique:suppliers',
+                'error_allowance' => 'required|numeric|max:3',
+            ));
+            if($validation->fails()) {
+                return 2;
             } else {
-                \Session::flash('success','Supplier has been created.');
-                return 1;
+                $result = DB::table('suppliers')->where('contact_email',$request->input('contact_email'))->where('contact_phone','=',$request->input('contact_phone'),'OR')->get(['id']);
+                if($result->count() <='0'){
+                    $suppliers = new Supplier;
+                    $suppliers->public_id = hash('md5', 'MB#'.str_random(42));
+                    $suppliers->name = $request->input('name');
+                    $suppliers->contact_email = $request->input('contact_email');
+                    $suppliers->contact_name = $request->input('contact_name');
+                    $suppliers->contact_phone = $request->input('contact_phone');
+                    $suppliers->error_allowance = $request->input('error_allowance');
+                    $suppliers->return_csv = (bool)$request->input('return_csv');
+                    $suppliers->active = (bool)$request->input('active');        
+                    if(!$suppliers->save()){
+                        return 0;
+                    } else {
+                        \Session::flash('success','Supplier has been created.');
+                        return 1;
+                    }
+                } else {
+                    return 2;
+                }
             }
-        } else {
-            return 2;
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return  0;
+            }
         }
     }
     /* end new data store in database */
@@ -58,34 +76,46 @@ class SuppliersController extends Controller
     /* end show edit page with all data particuler supplier */
     /* Start data update in database for particular supplier with parameters(all request data & and supplier id)*/
     public function update(Request $request, $supplier) {
-        $result = DB::table('suppliers')->where('contact_email',$request->input('contact_email'))->where('contact_phone','=',$request->input('contact_phone'),'OR')->get(['id']);
-        if($result->count()==1 && $result[0]->id==$supplier){
-            $suppliers = Supplier::find($supplier);
-            $suppliers->name = $request->input('name');
-            $suppliers->contact_email = $request->input('contact_email');
-            $suppliers->contact_name = $request->input('contact_name');
-            $suppliers->contact_phone = $request->input('contact_phone');
-            $suppliers->error_allowance = $request->input('error_allowance');
-            $suppliers->return_csv = (bool)$request->input('return_csv');
-            $suppliers->active = (bool)$request->input('active'); 
-            if(!$suppliers->save()){
-                return 0;
+        try{            
+            $result = DB::table('suppliers')->where('contact_email',$request->input('contact_email'))->where('contact_phone','=',$request->input('contact_phone'),'OR')->get(['id']);
+            if($result->count()==1 && $result[0]->id==$supplier){
+                $suppliers = Supplier::find($supplier);
+                $suppliers->name = $request->input('name');
+                $suppliers->contact_email = $request->input('contact_email');
+                $suppliers->contact_name = $request->input('contact_name');
+                $suppliers->contact_phone = $request->input('contact_phone');
+                $suppliers->error_allowance = $request->input('error_allowance');
+                $suppliers->return_csv = (bool)$request->input('return_csv');
+                $suppliers->active = (bool)$request->input('active'); 
+                if(!$suppliers->save()){
+                    return 0;
+                } else {
+                    \Session::flash('success','Supplier has been updated.');
+                    return 1;
+                }
             } else {
-                \Session::flash('success','Supplier has been updated.');
-                return 1;
+                return 2;
+            }            
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return  0;
             }
-        } else {
-            return 2;
         }
     }
     /* end data update in database for particular supplier with parameters(all request data & and supplier id) */
     /* Start particular supplier delete from database */
     public function destroy($supplier) {
-        $_supplier = Supplier::find($supplier);
-        if(!$_supplier->delete()){
-            return 0;
-        } else {
-            return 1;
+        try{
+            $_supplier = Supplier::find($supplier);
+            if(!$_supplier->delete()){
+                return 0;
+            } else {
+                return 1;
+            }
+        } catch (\Exception $e) {
+            if($e->getMessage()!=''){
+                return  0;
+            }
         }
     }
     /* end particular supplier delete from database */

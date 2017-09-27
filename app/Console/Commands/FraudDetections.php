@@ -195,7 +195,11 @@ class FraudDetections extends Command
     /*Start getting supplier name */
     public function supplierName($id){
         $suppliers = DB::table('suppliers')->where('id','=',$id)->get(['contact_name']);
-        return $suppliers[0]->contact_name;
+        if(!empty($suppliers[0])){
+            return $suppliers[0]->contact_name;
+        } else{
+            return 'No Name';
+        }
     }
     /*End getting supplier name */
     /* Start checking phone Multiple Email */
@@ -207,11 +211,13 @@ class FraudDetections extends Command
         $persentage = (10/100) * count($results);
         if(count($results) > 1){
             foreach ($results as $pme => $_result) {
-                if(in_array($_result->phone, $data)){
-                    $fistdata[$_result->phone][]=$pme;
-                } else {
-                    $data[]=$_result->phone;
-                    $fistdata[$_result->phone][]=$pme;
+                if($_result->phone!=''){
+                    if(in_array($_result->phone, $data)){
+                        $fistdata[$_result->phone][]=$pme;
+                    } else {
+                        $data[]=$_result->phone;
+                        $fistdata[$_result->phone][]=$pme;
+                    }
                 }
             }
 
@@ -241,11 +247,13 @@ class FraudDetections extends Command
         $i = 0;
         $persentage = (10/100) * count($results);
         foreach ($results as $pme => $_result) {
-            if(in_array($_result->phone, $data)){
-                $fistdata[$_result->phone][]=$pme;
-            } else {
-                $data[]=$_result->phone;
-                $fistdata[$_result->phone][]=$pme;
+            if($_result->phone!=''){
+                if(in_array($_result->phone, $data)){
+                    $fistdata[$_result->phone][]=$pme;
+                } else {
+                    $data[]=$_result->phone;
+                    $fistdata[$_result->phone][]=$pme;
+                }
             }
         }
 
@@ -274,11 +282,13 @@ class FraudDetections extends Command
         $i = 0;
         $persentage = (10/100) * count($results);
         foreach ($results as $pme => $_result) {
-            if(in_array($_result->phone, $data)){
-                $fistdata[$_result->phone][]=$pme;
-            } else {
-                $data[]=$_result->phone;
-                $fistdata[$_result->phone][]=$pme;
+            if($_result->phone!=''){
+                if(in_array($_result->phone, $data)){
+                    $fistdata[$_result->phone][]=$pme;
+                } else {
+                    $data[]=$_result->phone;
+                    $fistdata[$_result->phone][]=$pme;
+                }
             }
         }
 
@@ -307,11 +317,13 @@ class FraudDetections extends Command
         $i = 0;
         $persentage = (10/100) * count($results);
         foreach ($results as $pme => $_result) {
-            if(in_array($_result->email, $data)){
-                $fistdata[$_result->email][]=$pme;
-            } else {
-                $data[]=$_result->email;
-                $fistdata[$_result->email][]=$pme;
+            if($_result->email!=''){
+                if(in_array($_result->email, $data)){
+                    $fistdata[$_result->email][]=$pme;
+                } else {
+                    $data[]=$_result->email;
+                    $fistdata[$_result->email][]=$pme;
+                }
             }
         }
 
@@ -340,11 +352,13 @@ class FraudDetections extends Command
         $i = 0;
         $persentage = (10/100) * count($results);
         foreach ($results as $pme => $_result) {
-            if(in_array($_result->email, $data)){
-                $fistdata[$_result->email][]=$pme;
-            } else {
-                $data[]=$_result->email;
-                $fistdata[$_result->email][]=$pme;
+            if($_result->email!=''){
+                if(in_array($_result->email, $data)){
+                    $fistdata[$_result->email][]=$pme;
+                } else {
+                    $data[]=$_result->email;
+                    $fistdata[$_result->email][]=$pme;
+                }
             }
         }
 
@@ -373,11 +387,13 @@ class FraudDetections extends Command
         $i = 0;
         $persentage = (10/100) * count($results);
         foreach ($results as $pme => $_result) {
-            if(in_array($_result->email, $data)){
-                $fistdata[$_result->email][]=$pme;
-            } else {
-                $data[]=$_result->email;
-                $fistdata[$_result->email][]=$pme;
+            if($_result->email!=''){
+                if(in_array($_result->email, $data)){
+                    $fistdata[$_result->email][]=$pme;
+                } else {
+                    $data[]=$_result->email;
+                    $fistdata[$_result->email][]=$pme;
+                }
             }
         }
 
@@ -408,34 +424,36 @@ class FraudDetections extends Command
         $persentage = (10/100) * count($results);
         if(count($results) > 1){
             foreach ($results as $pme => $_result) {
-                $name =strtolower($_result->firstName.$_result->lastName);
-                $_plusemails = explode('@', $_result->email);
-                if(strpos($_result->email,'+') != false){
-                    $_plusemail = explode('+', $_plusemails[0]);
-                    $stringemmail = $_plusemail[0].'@'. $_plusemails[1];
-                } else {
-                    $stringemmail = str_replace($vowels,'',strtolower(str_replace('.','',strtolower($_result->email))));
-                }
+                if($_result->email!=''){
+                    $name =strtolower($_result->firstName.$_result->lastName);
+                    $_plusemails = explode('@', $_result->email);
+                    if(strripos($_result->email,'+') !== false){
+                        $_plusemail = explode('+', $_plusemails[0]);
+                        $stringemmail = $_plusemail[0].'@'. $_plusemails[1];
+                    } else {
+                        $stringemmail = str_replace($vowels,'',strtolower(str_replace('.','',strtolower($_result->email))));
+                    }
 
-                if(!in_array($stringemmail, $data)){
-                   $data[] = $stringemmail; 
-                }  
+                    if(!in_array($stringemmail, $data)){
+                       $data[] = $stringemmail; 
+                    }  
 
-                if(strpos($_result->email, strtolower($name)) != false && in_array($stringemmail, $data)){
-                    $fistdata[$_result->email][]=$pme;
-                }                
+                    if(strripos($_result->email, strtolower($name)) !== false && in_array($stringemmail, $data)){
+                        $fistdata[$_result->email][]=$pme;
+                    }                
 
-                if (strpos($_result->email,strtolower($_result->firstName)) != false && in_array($stringemmail, $data)) {
-                    $fistdata[$_result->email][]=$pme;
-                }
+                    if (strripos($_result->email,strtolower($_result->firstName)) !== false && in_array($stringemmail, $data)) {
+                        $fistdata[$_result->email][]=$pme;
+                    }
 
-                if (strpos($_result->email,'+') !=false && in_array($stringemmail, $data))  {
-                    $fistdata[$stringemmail][]=$pme;
-                }
+                    if (strripos($_result->email,'+') !==false && in_array($stringemmail, $data))  {
+                        $fistdata[$stringemmail][]=$pme;
+                    }
 
-                if(strpos(strtolower($_plusemails[0]),'.') != false && in_array($stringemmail, $data)){
-                    $fistdata[$_result->email][]=$pme;
-                }                              
+                    if(strripos(strtolower($_plusemails[0]),'.') !== false && in_array($stringemmail, $data)){
+                        $fistdata[$_result->email][]=$pme;
+                    } 
+                }                            
             }
 
             foreach ($fistdata as $fd => $_fistdata) {
